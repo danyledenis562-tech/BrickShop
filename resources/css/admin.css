@@ -1,0 +1,393 @@
+:root .admin-theme {
+  --lego-red: #e3000b;
+  --lego-yellow: #ffcf00;
+  --lego-blue: #0055bf;
+
+  --bg-main: radial-gradient(circle at top, #0f172a, #020617);
+  --bg-card: rgba(255, 255, 255, 0.06);
+  --bg-hover: rgba(255, 255, 255, 0.1);
+
+  --border-soft: rgba(255, 255, 255, 0.12);
+  --text-main: #e5e7eb;
+  --text-muted: #94a3b8;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.admin-theme {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg-main);
+}
+
+.admin-sidebar {
+  width: 260px;
+  background: rgba(2, 6, 23, 0.9);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.admin-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-logo-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: var(--lego-yellow);
+  color: #111827;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.admin-nav {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-nav-group-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 0.4rem 0 0.5rem;
+}
+
+.admin-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-nav-item:hover {
+  background: var(--bg-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-nav-item.is-active {
+  background: rgba(255, 207, 0, 0.12);
+  box-shadow: 0 10px 30px rgba(255, 207, 0, 0.12);
+}
+
+.admin-nav-item.is-active:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 4px;
+  background: var(--lego-yellow);
+}
+
+.admin-nav-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+}
+
+.admin-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(14px);
+}
+
+.admin-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.admin-breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.admin-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+}
+
+.admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--lego-yellow), var(--lego-red));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  font-weight: 800;
+}
+
+.admin-main {
+  padding: 2rem 1.5rem 2.5rem;
+}
+
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+}
+
+.admin-glass {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.55));
+}
+
+.admin-metric {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-metric-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-metric-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--lego-yellow);
+}
+
+.admin-metric-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.admin-chart {
+  position: relative;
+  min-height: 220px;
+}
+
+.admin-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.admin-stat {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.admin-stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.badge-new { background: rgba(255, 207, 0, 0.18); color: #ffcf00; }
+.badge-paid { background: rgba(34, 197, 94, 0.18); color: #22c55e; }
+.badge-processing { background: rgba(59, 130, 246, 0.18); color: #3b82f6; }
+.badge-shipped { background: rgba(139, 92, 246, 0.18); color: #8b5cf6; }
+.badge-canceled { background: rgba(227, 0, 11, 0.18); color: #e3000b; }
+
+.admin-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-soft);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--text-main);
+}
+
+.admin-table thead th {
+  position: sticky;
+  top: 0;
+  background: rgba(2, 6, 23, 0.9);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 0.85rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.admin-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.admin-table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-table td {
+  padding: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-icon-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.admin-icon-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-theme .lego-btn-primary {
+  background: var(--lego-yellow);
+  color: #111827;
+}
+
+.admin-theme .lego-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+}
+
+.admin-theme .lego-input {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
+}
+
+.admin-theme .lego-input:focus {
+  border-color: rgba(255, 207, 0, 0.7);
+  box-shadow: 0 0 0 3px rgba(255, 207, 0, 0.2);
+  outline: none;
+}
+
+.admin-confirm {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.admin-confirm.is-open {
+  display: flex;
+}
+
+.admin-confirm-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}

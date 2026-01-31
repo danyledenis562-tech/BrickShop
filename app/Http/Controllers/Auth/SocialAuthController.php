@@ -19,23 +19,27 @@ class SocialAuthController extends Controller
 
     public function callback(): RedirectResponse
     {
+        /** @var \Laravel\Socialite\Two\User $googleUser */
         $googleUser = Socialite::driver('google')->user();
+        $googleId = $googleUser->getId();
+        $googleEmail = $googleUser->getEmail();
+        $googleName = $googleUser->getName() ?? $googleUser->getNickname() ?? 'Google User';
 
         $user = User::query()
-            ->where('google_id', $googleUser->id)
-            ->orWhere('email', $googleUser->email)
+            ->where('google_id', $googleId)
+            ->orWhere('email', $googleEmail)
             ->first();
 
         if (! $user) {
             $user = User::query()->create([
-                'name' => $googleUser->name ?? $googleUser->nickname ?? 'Google User',
-                'email' => $googleUser->email,
+                'name' => $googleName,
+                'email' => $googleEmail,
                 'password' => Hash::make(Str::random(32)),
-                'google_id' => $googleUser->id,
+                'google_id' => $googleId,
                 'email_verified_at' => now(),
             ]);
         } elseif (! $user->google_id) {
-            $user->google_id = $googleUser->id;
+            $user->google_id = $googleId;
             $user->save();
         }
 

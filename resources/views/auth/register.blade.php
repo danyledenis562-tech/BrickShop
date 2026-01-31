@@ -46,6 +46,15 @@
             </x-primary-button>
         </div>
 
+        <div class="lego-auth-divider">
+            <span>або</span>
+        </div>
+
+        <a href="{{ route('auth.google') }}" class="lego-auth-google">
+            <span class="lego-auth-google-icon">G</span>
+            Зареєструватися через Google
+        </a>
+
         <div class="mt-5 text-center text-sm text-[color:var(--muted)]">
             Вже маєш акаунт?
             <a href="{{ route('login') }}" class="lego-auth-link">Увійти</a>

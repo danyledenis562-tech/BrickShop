@@ -1,85 +1,31 @@
-# Brick Shop (LEGO Store)
+# Brick Shop
 
-Full-featured LEGO-themed e-commerce built on Laravel 10, PHP 8.2+, Blade, and Vite.
+Це мій навчальний проєкт інтернет‑магазину LEGO на Laravel.
 
-## Requirements
+## Що потрібно
 - PHP 8.2+
 - Composer
 - Node.js 18+
-- XAMPP (Apache + MySQL + phpMyAdmin)
+- MySQL або PostgreSQL
 
-## Quick Start (XAMPP)
-1. Start Apache and MySQL in XAMPP.
-2. Create a database, e.g. `brick_shop`.
-3. Copy `.env.example` to `.env` and set:
-   - `APP_URL=http://localhost/lego-shop3/public`
-   - `DB_DATABASE=brick_shop`
-   - `DB_USERNAME=root`
-   - `DB_PASSWORD=`
-4. Install dependencies:
+## Як запустити локально
+1. Скопіювати `.env.example` у `.env` та вказати доступи до БД.
+2. Встановити залежності:
    - `composer install`
    - `npm install`
-5. Build assets:
-   - `npm run build` (or `npm run dev`)
-6. Generate key:
+3. Зібрати стилі:
+   - `npm run dev` (або `npm run build`)
+4. Згенерувати ключ:
    - `php artisan key:generate`
-7. Link storage:
+5. Зробити лінк на storage:
    - `php artisan storage:link`
-8. Run migrations and seeders:
-   - `php artisan migrate --seed`
+6. Запустити міграції:
+   - `php artisan migrate`
 
-## Demo Accounts
-- Admin: `admin@brickshop.test` / `Admin123!`
-- User: `user@brickshop.test` / `User123!`
-
-## Mail Setup (Password Reset)
-Set in `.env`:
-```
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USERNAME=your_user
-MAIL_PASSWORD=your_pass
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS="noreply@brickshop.test"
-MAIL_FROM_NAME="Brick Shop"
-```
-
-Dev options:
-- Use `MAIL_MAILER=log` to log emails in `storage/logs/laravel.log`
-- Or use Mailpit/Mailhog and point SMTP there
-
-## Support Widget Settings
-Admin panel → Settings:
-- `phone_support`
-- `telegram_support_url`
-- `show_support_widget`
-
-Seeder default values are in `database/seeders/SettingSeeder.php`.
-
-## Translations
-Locale files are in `lang/{uk,en,pl,ru}`.  
-Add new UI strings to `lang/*/messages.php` and validation to `lang/*/validation.php`.
-
-## Tests
-Run tests:
-```
-php artisan test
-```
-
-## Key Structure
-- `app/Http/Controllers` — MVC controllers
-- `app/Models` — Eloquent models
-- `database/migrations` — schema
-- `database/seeders` — demo data
-- `resources/views` — Blade templates
-- `lang` — localization
-
-## Commands Summary
-```
-composer install
-npm install
-npm run build
-php artisan key:generate
-php artisan storage:link
-php artisan migrate --seed
-```
+## Коротко про функціонал
+- каталог товарів, пошук, фільтри
+- сторінка товару з відгуками
+- кошик і оформлення замовлення
+- профіль користувача
+- адмін‑панель
+- кілька мов

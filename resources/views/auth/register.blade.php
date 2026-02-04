@@ -1,27 +1,24 @@
 <x-guest-layout>
     <div class="lego-auth-header">
         <a href="{{ route('welcome') }}" class="lego-auth-logo">Brick Shop</a>
-        <p class="lego-auth-subtitle">Створи акаунт у Brick Shop</p>
+        <p class="lego-auth-subtitle">{{ __('messages.register_subtitle') }}</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
         <div class="lego-auth-field">
             <x-input-label for="name" :value="__('messages.name')" />
             <x-text-input id="name" class="lego-auth-input block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
-        <!-- Email Address -->
         <div class="lego-auth-field">
             <x-input-label for="email" :value="__('messages.email')" />
             <x-text-input id="email" class="lego-auth-input block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Password -->
         <div class="lego-auth-field">
             <x-input-label for="password" :value="__('messages.password')" />
             <x-text-input id="password" class="lego-auth-input block mt-1 w-full"
@@ -31,7 +28,6 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Confirm Password -->
         <div class="lego-auth-field">
             <x-input-label for="password_confirmation" :value="__('messages.confirm_password')" />
             <x-text-input id="password_confirmation" class="lego-auth-input block mt-1 w-full"
@@ -42,22 +38,22 @@
 
         <div class="mt-6">
             <x-primary-button class="lego-auth-primary w-full justify-center">
-                Створити акаунт
+                {{ __('messages.register') }}
             </x-primary-button>
         </div>
 
         <div class="lego-auth-divider">
-            <span>або</span>
+            <span>{{ __('messages.or') }}</span>
         </div>
 
         <a href="{{ route('auth.google') }}" class="lego-auth-google">
             <span class="lego-auth-google-icon">G</span>
-            Зареєструватися через Google
+            {{ __('messages.register_google') }}
         </a>
 
         <div class="mt-5 text-center text-sm text-[color:var(--muted)]">
-            Вже маєш акаунт?
-            <a href="{{ route('login') }}" class="lego-auth-link">Увійти</a>
+            {{ __('messages.already_registered') }}
+            <a href="{{ route('login') }}" class="lego-auth-link">{{ __('messages.login') }}</a>
         </div>
     </form>
 </x-guest-layout>

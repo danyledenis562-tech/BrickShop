@@ -8,49 +8,49 @@
         <div class="mt-8 info-grid">
             <div class="lego-card info-card">
                 <div class="info-icon">🧾</div>
-                <div class="info-section-title">Умови повернення</div>
+                <div class="info-section-title">{{ __('messages.returns_terms') }}</div>
                 <p class="text-sm text-[color:var(--muted)]">{{ __('messages.returns_text_2') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">📦</div>
-                <div class="info-section-title">Стан товару</div>
+                <div class="info-section-title">{{ __('messages.returns_condition') }}</div>
                 <p class="text-sm text-[color:var(--muted)]">{{ __('messages.returns_text_3') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">🔁</div>
-                <div class="info-section-title">Обмін</div>
-                <p class="text-sm text-[color:var(--muted)]">Якщо набір не підійшов, обміняємо на інший протягом 14 днів.</p>
+                <div class="info-section-title">{{ __('messages.returns_exchange') }}</div>
+                <p class="text-sm text-[color:var(--muted)]">{{ __('messages.returns_exchange_desc') }}</p>
             </div>
         </div>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">FAQ</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.faq') }}</h2>
             <div class="mt-4 info-faq">
                 <div class="info-card">
-                    <div class="info-section-title">Як оформити повернення?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Зверніться до підтримки та підготуйте номер замовлення.</p>
+                    <div class="info-section-title">{{ __('messages.returns_faq_q1') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.returns_faq_a1') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Коли повернуть кошти?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Після перевірки товару — протягом 3-5 робочих днів.</p>
+                    <div class="info-section-title">{{ __('messages.returns_faq_q2') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.returns_faq_a2') }}</p>
                 </div>
             </div>
         </section>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">Чому нам довіряють</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.trust_title') }}</h2>
             <div class="mt-4 trust-grid">
                 <div class="info-card">
-                    <div class="info-section-title">Прозорі правила</div>
-                    <p class="text-sm text-[color:var(--muted)]">Без прихованих умов чи комісій.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_4_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_4_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Швидка обробка</div>
-                    <p class="text-sm text-[color:var(--muted)]">Повернення фіксуємо в день звернення.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_5_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_5_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Підтримка</div>
-                    <p class="text-sm text-[color:var(--muted)]">Допоможемо на кожному етапі.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_6_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_6_desc') }}</p>
                 </div>
             </div>
         </section>

@@ -9,48 +9,48 @@
             <div class="lego-card info-card">
                 <div class="info-icon">💳</div>
                 <div class="info-section-title">{{ __('messages.payment_card') }}</div>
-                <p class="text-sm text-[color:var(--muted)]">Оплата карткою онлайн — швидко та безпечно.</p>
+                <p class="text-sm text-[color:var(--muted)]">{{ __('messages.payment_card_desc') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">💵</div>
                 <div class="info-section-title">{{ __('messages.payment_cash') }}</div>
-                <p class="text-sm text-[color:var(--muted)]">Готівка або переказ при отриманні замовлення.</p>
+                <p class="text-sm text-[color:var(--muted)]">{{ __('messages.payment_cash_desc') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">🧾</div>
-                <div class="info-section-title">Фіскальний чек</div>
-                <p class="text-sm text-[color:var(--muted)]">Надсилаємо чек на email або в особистому кабінеті.</p>
+                <div class="info-section-title">{{ __('messages.payment_receipt') }}</div>
+                <p class="text-sm text-[color:var(--muted)]">{{ __('messages.payment_receipt_desc') }}</p>
             </div>
         </div>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">FAQ</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.faq') }}</h2>
             <div class="mt-4 info-faq">
                 <div class="info-card">
-                    <div class="info-section-title">Чи можна оплатити частинами?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Наразі доступна повна оплата карткою або при отриманні.</p>
+                    <div class="info-section-title">{{ __('messages.payment_faq_q1') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.payment_faq_a1') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Чи безпечні платежі?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Платежі проходять через захищені платіжні шлюзи.</p>
+                    <div class="info-section-title">{{ __('messages.payment_faq_q2') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.payment_faq_a2') }}</p>
                 </div>
             </div>
         </section>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">Чому нам довіряють</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.trust_title') }}</h2>
             <div class="mt-4 trust-grid">
                 <div class="info-card">
-                    <div class="info-section-title">Прозора оплата</div>
-                    <p class="text-sm text-[color:var(--muted)]">Без прихованих комісій.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_7_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_7_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Офіційні документи</div>
-                    <p class="text-sm text-[color:var(--muted)]">Надаємо чек та підтвердження.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_8_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_8_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Підтримка</div>
-                    <p class="text-sm text-[color:var(--muted)]">Завжди допоможемо з оплатою.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_9_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_9_desc') }}</p>
                 </div>
             </div>
         </section>

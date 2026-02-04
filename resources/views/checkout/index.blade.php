@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-6xl px-4 py-10">
         <div class="checkout-header">
             <h1 class="text-3xl font-extrabold">{{ __('messages.checkout') }}</h1>
-            <p class="text-sm text-[color:var(--muted)]">Заповніть дані — замовлення буде готове за хвилину.</p>
+            <p class="text-sm text-[color:var(--muted)]">{{ __('messages.checkout_hint') }}</p>
         </div>
 
         <div class="checkout-grid mt-6">
@@ -11,22 +11,22 @@
                     <div class="checkout-step is-active">
                         <span class="checkout-step-index">1</span>
                         <div>
-                            <div class="checkout-step-title">Контактні дані</div>
-                            <div class="checkout-step-subtitle">Імʼя, телефон, адреса</div>
+                            <div class="checkout-step-title">{{ __('messages.checkout_step_contact') }}</div>
+                            <div class="checkout-step-subtitle">{{ __('messages.checkout_step_contact_desc') }}</div>
                         </div>
                     </div>
                     <div class="checkout-step">
                         <span class="checkout-step-index">2</span>
                         <div>
-                            <div class="checkout-step-title">Доставка та оплата</div>
-                            <div class="checkout-step-subtitle">Виберіть спосіб</div>
+                            <div class="checkout-step-title">{{ __('messages.checkout_step_delivery') }}</div>
+                            <div class="checkout-step-subtitle">{{ __('messages.checkout_step_delivery_desc') }}</div>
                         </div>
                     </div>
                     <div class="checkout-step">
                         <span class="checkout-step-index">3</span>
                         <div>
-                            <div class="checkout-step-title">Підтвердження</div>
-                            <div class="checkout-step-subtitle">Підсумок замовлення</div>
+                            <div class="checkout-step-title">{{ __('messages.checkout_step_confirm') }}</div>
+                            <div class="checkout-step-subtitle">{{ __('messages.checkout_step_confirm_desc') }}</div>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                 <form method="POST" action="{{ route('checkout.store') }}" class="lego-card p-6 space-y-5">
                     @csrf
                     <div class="checkout-section">
-                        <h2 class="checkout-section-title">Дані покупця</h2>
+                        <h2 class="checkout-section-title">{{ __('messages.checkout_customer') }}</h2>
                         <div class="grid gap-4 md:grid-cols-2">
                             <label class="checkout-field">
                                 <span class="checkout-icon">👤</span>
@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="checkout-section">
-                        <h2 class="checkout-section-title">Доставка та оплата</h2>
+                        <h2 class="checkout-section-title">{{ __('messages.checkout_delivery_payment') }}</h2>
                         <div class="grid gap-4 md:grid-cols-2">
                             <label class="checkout-field">
                                 <span class="checkout-icon">🚚</span>

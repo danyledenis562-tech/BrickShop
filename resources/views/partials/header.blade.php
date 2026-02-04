@@ -42,10 +42,13 @@
 
             <div class="lego-header-actions flex items-center gap-2">
                 <details class="lego-dropdown relative text-xs font-semibold">
-                    <summary class="lego-pill cursor-pointer">{{ $localeLabels[$locale] ?? 'UA' }} ▼</summary>
+                    <summary class="lego-pill lego-lang-toggle cursor-pointer" aria-label="{{ __('messages.language') }}">
+                        <span class="lego-lang-icon">🌐</span>
+                        {{ $localeLabels[$locale] ?? 'UA' }}
+                    </summary>
                     <div class="absolute right-0 mt-2 w-24 rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] p-2 shadow">
                         @foreach ($localeLabels as $code => $label)
-                            <a href="{{ route('locale.switch', $code) }}" class="block rounded-lg px-2 py-1 hover:bg-[color:var(--lego-yellow)]">
+                            <a href="{{ route('locale.switch', $code) }}" class="block rounded-lg px-2 py-1 hover:bg-[color:var(--lego-yellow)] {{ $locale === $code ? 'bg-[color:var(--lego-yellow)]' : '' }}">
                                 {{ $label }}
                             </a>
                         @endforeach

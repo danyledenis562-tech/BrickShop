@@ -8,49 +8,49 @@
         <div class="mt-8 info-grid">
             <div class="lego-card info-card">
                 <div class="info-icon">🚚</div>
-                <div class="info-section-title">Способи доставки</div>
+                <div class="info-section-title">{{ __('messages.shipping_methods') }}</div>
                 <p class="text-sm text-[color:var(--muted)]">{{ __('messages.shipping_text_2') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">⏱️</div>
-                <div class="info-section-title">Терміни</div>
+                <div class="info-section-title">{{ __('messages.shipping_timeline') }}</div>
                 <p class="text-sm text-[color:var(--muted)]">{{ __('messages.shipping_text_3') }}</p>
             </div>
             <div class="lego-card info-card">
                 <div class="info-icon">📍</div>
-                <div class="info-section-title">Відстеження</div>
-                <p class="text-sm text-[color:var(--muted)]">Після відправлення ви отримаєте номер ТТН або повідомлення у профілі.</p>
+                <div class="info-section-title">{{ __('messages.shipping_tracking') }}</div>
+                <p class="text-sm text-[color:var(--muted)]">{{ __('messages.shipping_tracking_desc') }}</p>
             </div>
         </div>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">FAQ</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.faq') }}</h2>
             <div class="mt-4 info-faq">
                 <div class="info-card">
-                    <div class="info-section-title">Скільки коштує доставка?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Вартість залежить від служби доставки та ваги набору.</p>
+                    <div class="info-section-title">{{ __('messages.shipping_faq_q1') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.shipping_faq_a1') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Чи можна змінити адресу?</div>
-                    <p class="text-sm text-[color:var(--muted)]">Так, до моменту відправлення — через підтримку або в профілі.</p>
+                    <div class="info-section-title">{{ __('messages.shipping_faq_q2') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.shipping_faq_a2') }}</p>
                 </div>
             </div>
         </section>
 
         <section class="mt-10 lego-card p-6">
-            <h2 class="text-xl font-bold">Чому нам довіряють</h2>
+            <h2 class="text-xl font-bold">{{ __('messages.trust_title') }}</h2>
             <div class="mt-4 trust-grid">
                 <div class="info-card">
-                    <div class="info-section-title">Оригінальні LEGO</div>
-                    <p class="text-sm text-[color:var(--muted)]">Працюємо з офіційними постачальниками.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_1_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_1_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Гарантія якості</div>
-                    <p class="text-sm text-[color:var(--muted)]">Перевіряємо комплектацію перед відправкою.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_2_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_2_desc') }}</p>
                 </div>
                 <div class="info-card">
-                    <div class="info-section-title">Підтримка 7/7</div>
-                    <p class="text-sm text-[color:var(--muted)]">Відповідаємо у чаті та на пошті.</p>
+                    <div class="info-section-title">{{ __('messages.trust_item_3_title') }}</div>
+                    <p class="text-sm text-[color:var(--muted)]">{{ __('messages.trust_item_3_desc') }}</p>
                 </div>
             </div>
         </section>

@@ -58,10 +58,10 @@
                 </div>
                 <div class="lego-weekly-banner" style="--banner-image: url('{{ $weeklyBannerImage }}');" data-animate>
                     <div class="lego-weekly-content">
-                        <div class="lego-weekly-eyebrow">Банер тижня</div>
-                        <h3 class="mt-3 text-2xl font-extrabold text-white md:text-3xl">LEGO Technic — сила інженерії</h3>
-                        <p class="mt-3 text-sm text-white/85 md:text-base">Потужні моделі для тих, хто хоче більше</p>
-                        <a href="{{ route('catalog', ['category' => 'lego-technic']) }}" class="mt-5 inline-flex lego-btn lego-btn-primary text-xs md:text-sm">До каталогу</a>
+                        <div class="lego-weekly-eyebrow">{{ __('messages.hero_poster_label') }}</div>
+                        <h3 class="mt-3 text-2xl font-extrabold text-white md:text-3xl">{{ __('messages.hero_poster_title') }}</h3>
+                        <p class="mt-3 text-sm text-white/85 md:text-base">{{ __('messages.hero_poster_subtitle') }}</p>
+                        <a href="{{ route('catalog', ['category' => 'lego-technic']) }}" class="mt-5 inline-flex lego-btn lego-btn-primary text-xs md:text-sm">{{ __('messages.go_catalog') }}</a>
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
 
         <section class="lego-section" data-animate>
             <div class="flex items-center justify-between">
-                <h2 class="lego-section-title">Головні добірки</h2>
+                <h2 class="lego-section-title">{{ __('messages.home_collections') }}</h2>
                 <a href="{{ route('catalog') }}" class="text-sm font-semibold text-[color:var(--lego-blue)]">{{ __('messages.view_all') }}</a>
             </div>
             <div class="mt-6 grid gap-4 md:grid-cols-3">
@@ -89,7 +89,7 @@
                     @endphp
                     <a href="{{ $posterLink }}" class="lego-poster block" style="--poster-image: url('{{ $posterImage }}'); --poster-glow: {{ $posterGlow }}; --poster-gradient: {{ $posterGradient }};">
                         <div class="lego-poster-content">
-                            <div class="text-xs uppercase tracking-widest text-white/70">LEGO Featured</div>
+                            <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.featured_collections') }}</div>
                             <div class="mt-2 text-2xl font-extrabold">{{ $banner->title }}</div>
                             <p class="mt-2 text-sm text-white/90">{{ $banner->subtitle }}</p>
                             <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>

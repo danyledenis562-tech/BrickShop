@@ -40,7 +40,7 @@ class DashboardController extends Controller
             ->values();
 
         $monthlySalesRaw = Order::query()
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(total) as total")
+            ->selectRaw("TO_CHAR(created_at, 'YYYY-MM') as month, SUM(total) as total")
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
             ->groupBy('month')
             ->orderBy('month')

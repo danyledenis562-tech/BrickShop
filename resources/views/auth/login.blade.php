@@ -46,14 +46,16 @@
             </x-primary-button>
         </div>
 
-        <div class="lego-auth-divider">
-            <span>{{ __('messages.or') }}</span>
-        </div>
+        @if (Route::has('auth.google'))
+            <div class="lego-auth-divider">
+                <span>{{ __('messages.or') }}</span>
+            </div>
 
-        <a href="{{ route('auth.google') }}" class="lego-auth-google">
-            <span class="lego-auth-google-icon">G</span>
-            {{ __('messages.login_google') }}
-        </a>
+            <a href="{{ route('auth.google') }}" class="lego-auth-google">
+                <span class="lego-auth-google-icon">G</span>
+                {{ __('messages.login_google') }}
+            </a>
+        @endif
 
         <div class="mt-5 text-center text-sm text-[color:var(--muted)]">
             {{ __('messages.no_account') }}

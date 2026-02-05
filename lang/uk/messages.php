@@ -121,6 +121,7 @@ return [
     'password' => 'Пароль',
     'remember_me' => 'Запамʼятати мене',
     'forgot_password' => 'Забули пароль?',
+    'google_login_failed' => 'Не вдалося увійти через Google. Спробуйте ще раз.',
     'already_registered' => 'Вже зареєстровані?',
     'confirm_password' => 'Підтвердіть пароль',
     'forgot_password_text' => 'Вкажіть email і ми надішлемо посилання для відновлення.',

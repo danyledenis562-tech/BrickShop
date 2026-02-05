@@ -1168,6 +1168,91 @@
         box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
     }
 
+    .lego-auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+
+    .lego-auth-divider::before,
+    .lego-auth-divider::after {
+        content: '';
+        flex: 1 1 0;
+        height: 1px;
+        background: radial-gradient(circle, rgba(148, 163, 184, 0.8), transparent 70%);
+        opacity: 0.7;
+    }
+
+    .lego-auth-google {
+        margin-top: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: 100%;
+        border-radius: 999px;
+        padding: 0.7rem 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.06), transparent 55%),
+            rgba(15, 23, 42, 0.7);
+        color: #f8fafc;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.45);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    [data-theme="light"] .lego-auth-google {
+        background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9), transparent 55%),
+            #ffffff;
+        color: #111827;
+        box-shadow: 0 10px 24px rgba(148, 163, 184, 0.35);
+    }
+
+    .lego-auth-google:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba(15, 23, 42, 0.55);
+        border-color: rgba(250, 204, 21, 0.7);
+    }
+
+    .lego-auth-google:active {
+        transform: translateY(1px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.6);
+    }
+
+    .lego-auth-google-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4);
+        font-size: 0;
+    }
+
+    .lego-auth-google-icon::before {
+        content: 'G';
+        display: block;
+        font-weight: 800;
+        font-size: 1rem;
+        background: conic-gradient(
+            from 0deg,
+            #ea4335 0deg 90deg,
+            #fbbc05 90deg 180deg,
+            #34a853 180deg 270deg,
+            #4285f4 270deg 360deg
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
     @media (max-width: 480px) {
         .lego-auth-card {
             padding: 1.5rem;

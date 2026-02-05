@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -17,10 +18,20 @@ class SocialAuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback(): RedirectResponse
+    public function callback(Request $request): RedirectResponse
     {
+        if ($request->string('error')->toString() !== '' || ! $request->filled('code')) {
+            return redirect()->route('login')->with('status', __('messages.google_login_failed'));
+        }
+
+        /** @var \Laravel\Socialite\Two\AbstractProvider $provider */
+        $provider = Socialite::driver('google');
+        if (app()->environment('production')) {
+            $provider = $provider->stateless();
+        }
+
         /** @var \Laravel\Socialite\Two\User $googleUser */
-        $googleUser = Socialite::driver('google')->user();
+        $googleUser = $provider->user();
         $googleId = $googleUser->getId();
         $googleEmail = $googleUser->getEmail();
         $googleName = $googleUser->getName() ?? $googleUser->getNickname() ?? 'Google User';

@@ -121,6 +121,7 @@ return [
     'password' => 'Hasło',
     'remember_me' => 'Zapamiętaj mnie',
     'forgot_password' => 'Nie pamiętasz hasła?',
+    'google_login_failed' => 'Logowanie przez Google nie powiodlo sie. Sprobuj ponownie.',
     'already_registered' => 'Masz już konto?',
     'confirm_password' => 'Potwierdź hasło',
     'forgot_password_text' => 'Podaj email, a wyślemy link do resetu.',

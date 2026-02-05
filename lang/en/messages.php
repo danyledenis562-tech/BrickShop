@@ -121,6 +121,7 @@ return [
     'password' => 'Password',
     'remember_me' => 'Remember me',
     'forgot_password' => 'Forgot your password?',
+    'google_login_failed' => 'Google sign-in failed. Please try again.',
     'already_registered' => 'Already registered?',
     'confirm_password' => 'Confirm password',
     'forgot_password_text' => 'Enter your email and we will send a reset link.',

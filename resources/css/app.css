@@ -464,6 +464,30 @@
         transform: scale(1.06);
     }
 
+    /* Product image magnifier (lens) */
+    .product-magnifier {
+        overflow: hidden;
+    }
+
+    .magnifier-lens {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.1s ease;
+        background-repeat: no-repeat;
+        background-color: var(--card);
+        z-index: 10;
+    }
+
+    .product-magnifier.is-active .magnifier-lens {
+        opacity: 1;
+    }
+
     .lego-category-card {
         @apply block;
         border-radius: var(--radius-lg);

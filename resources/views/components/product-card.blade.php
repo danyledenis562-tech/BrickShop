@@ -18,18 +18,20 @@
 
     <div class="lego-product-content">
         @if ($showBadges)
-            <div class="absolute left-4 top-4 z-20 flex gap-2">
-                @if ($isNew)
-                    <span class="lego-badge lego-badge-new">{{ __('messages.badge_new') }}</span>
-                @endif
-                @if ($isTop)
-                    <span class="lego-badge lego-badge-top">{{ __('messages.badge_top') }}</span>
-                @endif
-                @if ($isSale)
-                    <span class="lego-badge lego-badge-sale">{{ __('messages.badge_sale') }}</span>
-                @endif
+            <div class="absolute inset-x-4 top-4 z-20 flex justify-between items-start gap-2">
+                <div class="flex flex-wrap gap-2 min-w-0 max-w-[55%]">
+                    @if ($isNew)
+                        <span class="lego-badge lego-badge-new">{{ __('messages.badge_new') }}</span>
+                    @endif
+                    @if ($isTop)
+                        <span class="lego-badge lego-badge-top">{{ __('messages.badge_top') }}</span>
+                    @endif
+                    @if ($isSale)
+                        <span class="lego-badge lego-badge-sale">{{ __('messages.badge_sale') }}</span>
+                    @endif
+                </div>
+                <span class="lego-badge shrink-0">{{ $product->series ?? 'LEGO' }}</span>
             </div>
-            <span class="absolute right-4 top-4 z-20 lego-badge">{{ $product->series ?? 'LEGO' }}</span>
         @endif
 
         <div class="lego-brick {{ $imageHeight }} bg-[color:var(--lego-yellow)]">

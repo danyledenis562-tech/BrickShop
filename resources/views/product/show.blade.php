@@ -7,9 +7,9 @@
         @endphp
 
         <div class="grid gap-8 lg:grid-cols-2">
-            <div class="lego-card p-4 lego-zoom">
+            <div class="lego-card p-4">
                 <div class="relative lego-brick h-80 bg-[color:var(--lego-yellow)]">
-                    <div class="absolute left-4 top-4 flex gap-2">
+                    <div class="absolute inset-x-4 top-4 z-20 flex flex-wrap gap-2 max-w-full">
                         @if ($isNew)
                             <span class="lego-badge lego-badge-new">{{ __('messages.badge_new') }}</span>
                         @endif
@@ -20,11 +20,16 @@
                             <span class="lego-badge lego-badge-sale">{{ __('messages.badge_sale') }}</span>
                         @endif
                     </div>
-                    <x-product-image :path="$product->mainImage?->path" :alt="$product->name" class="h-full w-full object-cover" />
+                    <div class="product-magnifier relative h-full w-full cursor-crosshair" id="product-magnifier">
+                        <x-product-image :path="$product->mainImage?->path" :alt="$product->name" class="magnifier-source h-full w-full object-cover" data-magnifier-source />
+                        <div class="magnifier-lens" id="magnifier-lens" aria-hidden="true"></div>
+                    </div>
                 </div>
-                <div class="mt-4 grid grid-cols-3 gap-2">
-                    @foreach ($product->images as $image)
-                        <x-product-image :path="$image->path" :alt="$product->name" class="h-20 w-full rounded-lg object-cover" />
+                <div class="mt-4 grid grid-cols-3 gap-2 overflow-hidden min-h-0">
+                    @foreach ($product->images->take(6) as $image)
+                        <div class="min-h-0">
+                            <x-product-image :path="$image->path" :alt="$product->name" class="h-20 w-full min-h-0 rounded-lg object-cover" />
+                        </div>
                     @endforeach
                 </div>
             </div>

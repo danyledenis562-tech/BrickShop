@@ -25,13 +25,6 @@
                         <div class="magnifier-lens" id="magnifier-lens" aria-hidden="true"></div>
                     </div>
                 </div>
-                <div class="mt-4 grid grid-cols-3 gap-2 overflow-hidden min-h-0">
-                    @foreach ($product->images->take(6) as $image)
-                        <div class="min-h-0">
-                            <x-product-image :path="$image->path" :alt="$product->name" class="h-20 w-full min-h-0 rounded-lg object-cover" />
-                        </div>
-                    @endforeach
-                </div>
             </div>
 
             <div class="lego-card p-6">

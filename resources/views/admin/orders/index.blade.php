@@ -1,7 +1,14 @@
 <x-admin-layout>
     <x-slot name="breadcrumb">Admin / Orders</x-slot>
 
-    <h1 class="text-2xl font-bold">{{ __('messages.orders') }}</h1>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <h1 class="text-2xl font-bold">{{ __('messages.orders') }}</h1>
+        <form method="GET" action="{{ route('admin.orders.export') }}" class="flex flex-wrap items-center gap-2">
+            <input name="date_from" value="{{ request('date_from') }}" type="date" class="lego-input text-sm">
+            <input name="date_to" value="{{ request('date_to') }}" type="date" class="lego-input text-sm">
+            <button type="submit" class="lego-btn lego-btn-primary text-xs">{{ __('messages.export_orders') }}</button>
+        </form>
+    </div>
     <form class="mt-4 grid gap-3 md:grid-cols-4">
         <input name="user" value="{{ request('user') }}" class="lego-input" placeholder="{{ __('messages.email') }}">
         <select name="status" class="lego-input">

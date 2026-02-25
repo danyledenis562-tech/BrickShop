@@ -14,6 +14,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
+        "larastan/larastan": "2.9",
         "laravel/breeze": "*",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
@@ -35,6 +36,9 @@
         }
     },
     "scripts": {
+        "analyse": [
+            "vendor/bin/phpstan analyse -c phpstan.neon.dist"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

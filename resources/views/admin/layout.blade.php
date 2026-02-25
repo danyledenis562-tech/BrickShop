@@ -16,6 +16,7 @@
                     <a href="{{ route('admin.products.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.products') }}</a>
                     <a href="{{ route('admin.categories.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.categories') }}</a>
                     <a href="{{ route('admin.banners.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.banners') }}</a>
+                    <a href="{{ route('admin.promo-codes.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.promo_codes') }}</a>
                     <a href="{{ route('admin.orders.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.orders') }}</a>
                     <a href="{{ route('admin.reviews.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.reviews') }}</a>
                     <a href="{{ route('admin.users.index') }}" class="block rounded-xl px-3 py-2 hover:bg-[color:var(--lego-yellow)]">{{ __('messages.users') }}</a>
@@ -30,7 +31,7 @@
                         <div class="text-sm text-[color:var(--muted)]">
                             {{ $breadcrumb ?? 'Admin' }}
                         </div>
-                        <button type="button" class="lego-btn lego-btn-secondary lego-back-btn" data-back data-back-fallback="{{ route('admin.dashboard') }}">← Назад</button>
+                        <button type="button" class="lego-btn lego-btn-secondary lego-back-btn" data-back data-back-fallback="{{ route('admin.dashboard') }}">{{ __('messages.back') }}</button>
                     </div>
                 </header>
 

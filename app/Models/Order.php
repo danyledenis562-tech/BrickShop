@@ -11,8 +11,10 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'promo_code_id',
         'status',
         'total',
+        'discount_amount',
         'full_name',
         'phone',
         'city',
@@ -25,12 +27,18 @@ class Order extends Model
 
     protected $casts = [
         'total' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'canceled_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function promoCode()
+    {
+        return $this->belongsTo(PromoCode::class, 'promo_code_id');
     }
 
     public function items()

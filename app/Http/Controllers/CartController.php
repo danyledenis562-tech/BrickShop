@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CartRequest;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,11 +45,9 @@ class CartController extends Controller
         return back()->with('toast', __('messages.cart_added'));
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(CartRequest $request, Product $product): RedirectResponse
     {
-        $data = $request->validate([
-            'quantity' => ['required', 'integer', 'min:1', 'max:99'],
-        ]);
+        $data = $request->validated();
 
         $cart = $this->getCart($request);
         $key = (string) $product->id;

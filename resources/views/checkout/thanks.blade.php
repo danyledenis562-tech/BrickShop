@@ -11,6 +11,9 @@
                     </div>
                 @endforeach
             </div>
+            @if($order->discount_amount > 0)
+                <div class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.discount') }}: −{{ number_format($order->discount_amount, 2) }} грн</div>
+            @endif
             <div class="mt-4 text-lg font-bold">{{ __('messages.total') }}: {{ number_format($order->total, 2) }} грн</div>
             <a href="{{ route('catalog') }}" class="mt-4 inline-block lego-btn lego-btn-primary">{{ __('messages.back_to_catalog') }}</a>
         </div>

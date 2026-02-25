@@ -22,6 +22,12 @@
 6. Запустити міграції:
    - `php artisan migrate`
 
+## Деплой (production)
+Після `composer install --no-dev` та міграцій виконай кеш для прискорення:
+- `php artisan config:cache`
+- `php artisan route:cache`
+- `php artisan view:cache`
+
 ## Коротко про функціонал
 - каталог товарів, пошук, фільтри
 - сторінка товару з відгуками

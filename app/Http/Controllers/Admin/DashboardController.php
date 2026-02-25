@@ -39,8 +39,11 @@ class DashboardController extends Controller
             })
             ->values();
 
+        $monthFormat = DB::getDriverName() === 'pgsql'
+            ? "TO_CHAR(created_at, 'YYYY-MM')"
+            : "DATE_FORMAT(created_at, '%Y-%m')";
         $monthlySalesRaw = Order::query()
-            ->selectRaw("TO_CHAR(created_at, 'YYYY-MM') as month, SUM(total) as total")
+            ->selectRaw("{$monthFormat} as month, SUM(total) as total")
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
             ->groupBy('month')
             ->orderBy('month')

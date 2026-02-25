@@ -31,7 +31,7 @@
         <main class="min-h-screen theme-fade lego-page">
             @unless (request()->routeIs('welcome'))
                 <div class="lego-back-bar">
-                    <button type="button" class="lego-btn lego-btn-secondary lego-back-btn" data-back data-back-fallback="{{ route('welcome') }}">← Назад</button>
+                    <button type="button" class="lego-btn lego-btn-secondary lego-back-btn" data-back data-back-fallback="{{ route('welcome') }}">{{ __('messages.back') }}</button>
                 </div>
             @endunless
             {{ $slot }}

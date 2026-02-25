@@ -4,39 +4,39 @@
         <p class="lego-auth-subtitle">{{ __('messages.register_subtitle') }}</p>
     </div>
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" class="lego-auth-form">
         @csrf
 
         <div class="lego-auth-field">
-            <x-input-label for="name" :value="__('messages.name')" />
-            <x-text-input id="name" class="lego-auth-input block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <x-input-label for="name" :value="__('messages.name')" class="lego-auth-label" />
+            <x-text-input id="name" class="lego-auth-input block w-full {{ $errors->has('name') ? 'lego-auth-input-error' : '' }}" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" />
         </div>
 
         <div class="lego-auth-field">
-            <x-input-label for="email" :value="__('messages.email')" />
-            <x-text-input id="email" class="lego-auth-input block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="email" :value="__('messages.email')" class="lego-auth-label" />
+            <x-text-input id="email" class="lego-auth-input block w-full {{ $errors->has('email') ? 'lego-auth-input-error' : '' }}" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" />
         </div>
 
         <div class="lego-auth-field">
-            <x-input-label for="password" :value="__('messages.password')" />
-            <x-text-input id="password" class="lego-auth-input block mt-1 w-full"
+            <x-input-label for="password" :value="__('messages.password')" class="lego-auth-label" />
+            <x-text-input id="password" class="lego-auth-input block w-full {{ $errors->has('password') ? 'lego-auth-input-error' : '' }}"
                           type="password"
                           name="password"
                           required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password')" />
         </div>
 
         <div class="lego-auth-field">
-            <x-input-label for="password_confirmation" :value="__('messages.confirm_password')" />
-            <x-text-input id="password_confirmation" class="lego-auth-input block mt-1 w-full"
+            <x-input-label for="password_confirmation" :value="__('messages.confirm_password')" class="lego-auth-label" />
+            <x-text-input id="password_confirmation" class="lego-auth-input block w-full {{ $errors->has('password_confirmation') ? 'lego-auth-input-error' : '' }}"
                           type="password"
                           name="password_confirmation" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
 
-        <div class="mt-6">
+        <div class="lego-auth-submit">
             <x-primary-button class="lego-auth-primary w-full justify-center">
                 {{ __('messages.register') }}
             </x-primary-button>
@@ -53,7 +53,7 @@
             </a>
         @endif
 
-        <div class="mt-5 text-center text-sm text-[color:var(--muted)]">
+        <div class="lego-auth-footer">
             {{ __('messages.already_registered') }}
             <a href="{{ route('login') }}" class="lego-auth-link">{{ __('messages.login') }}</a>
         </div>

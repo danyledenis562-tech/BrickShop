@@ -76,6 +76,22 @@
                     </div>
 
                     <div class="checkout-section">
+                        <h2 class="checkout-section-title">{{ __('messages.promo_code') }}</h2>
+                        @if($appliedPromo)
+                            <p class="text-sm text-[color:var(--muted)]">{{ __('messages.promo_applied') }}: <strong>{{ $appliedPromo->code }}</strong></p>
+                            <input type="hidden" name="promo_code" value="{{ $appliedPromo->code }}">
+                        @else
+                            <form method="GET" action="{{ route('checkout.index') }}" class="flex gap-2">
+                                <input type="text" name="promo_code" class="lego-input flex-1" placeholder="{{ __('messages.promo_code') }}" value="{{ old('promo_code', request('promo_code')) }}">
+                                <button type="submit" class="lego-btn lego-btn-secondary">{{ __('messages.promo_apply') }}</button>
+                            </form>
+                            @if(request('promo_code') && !$appliedPromo)
+                                <p class="mt-1 text-sm text-red-600">{{ __('messages.promo_invalid') }}</p>
+                            @endif
+                        @endif
+                    </div>
+
+                    <div class="checkout-section">
                         <h2 class="checkout-section-title">{{ __('messages.note') }}</h2>
                         <label class="checkout-field">
                             <span class="checkout-icon">📝</span>
@@ -103,6 +119,16 @@
                         </div>
                     @endforeach
                 </div>
+                @if($discount > 0)
+                    <div class="checkout-item">
+                        <span>{{ __('messages.subtotal') }}</span>
+                        <span>{{ number_format($subtotal, 2) }} грн</span>
+                    </div>
+                    <div class="checkout-item text-green-600">
+                        <span>{{ __('messages.discount') }}</span>
+                        <span>−{{ number_format($discount, 2) }} грн</span>
+                    </div>
+                @endif
                 <div class="checkout-total">
                     <span>{{ __('messages.total') }}</span>
                     <span>{{ number_format($total, 2) }} грн</span>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
+use App\Http\Controllers\Admin\PromoCodeController as AdminPromoCodeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
@@ -24,7 +25,7 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/search-suggestions', [CatalogController::class, 'suggestions'])->name('catalog.suggestions');
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('product.show');
-Route::post('/product/{product:slug}/reviews', [ProductController::class, 'review'])->middleware('auth')->name('product.review');
+Route::post('/product/{product:slug}/reviews', [ProductController::class, 'review'])->middleware(['auth', 'throttle:reviews'])->name('product.review');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{product:slug}', [CartController::class, 'add'])->name('cart.add');
@@ -35,7 +36,7 @@ Route::delete('/favorites/{product:slug}', [FavoriteController::class, 'destroy'
 
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
     Route::get('/checkout/thanks/{order}', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -54,7 +55,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::resource('products', AdminProductController::class);
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('banners', AdminBannerController::class)->except(['show']);
+    Route::resource('promo-codes', AdminPromoCodeController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->only(['index', 'edit', 'update']);
+    Route::get('orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::resource('reviews', AdminReviewController::class)->only(['index', 'update', 'destroy']);
     Route::get('settings', [AdminSettingController::class, 'edit'])->name('settings.edit');

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\PromoCode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,12 +22,24 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('toast', __('messages.cart_empty'));
         }
 
-        $total = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
+        $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
+        $discount = 0.0;
+        $appliedPromo = null;
 
-        return view('checkout.index', compact('cart', 'total'));
+        if ($promoInput = $request->string('promo_code')->trim()->toString()) {
+            $promo = PromoCode::where('code', $promoInput)->first();
+            if ($promo && $promo->isValid()) {
+                $appliedPromo = $promo;
+                $discount = $promo->applyDiscount($subtotal);
+            }
+        }
+
+        $total = round($subtotal - $discount, 2);
+
+        return view('checkout.index', compact('cart', 'subtotal', 'discount', 'total', 'appliedPromo'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CheckoutRequest $request): RedirectResponse
     {
         $cart = $request->session()->get('cart', []);
 
@@ -33,23 +47,29 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('toast', __('messages.cart_empty'));
         }
 
-        $data = $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:30'],
-            'city' => ['required', 'string', 'max:100'],
-            'address' => ['required', 'string', 'max:255'],
-            'delivery_type' => ['required', 'string', 'max:50'],
-            'payment_type' => ['required', 'string', 'max:50'],
-            'note' => ['nullable', 'string', 'max:500'],
-        ]);
+        $data = $request->validated();
 
-        $total = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
+        $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
+        $discount = 0.0;
+        $promoCodeId = null;
 
-        $order = DB::transaction(function () use ($request, $data, $cart, $total) {
+        if (! empty($data['promo_code'])) {
+            $promo = PromoCode::where('code', $data['promo_code'])->first();
+            if ($promo && $promo->isValid()) {
+                $discount = $promo->applyDiscount($subtotal);
+                $promoCodeId = $promo->id;
+            }
+        }
+
+        $total = round($subtotal - $discount, 2);
+
+        $order = DB::transaction(function () use ($request, $data, $cart, $total, $discount, $promoCodeId) {
             $order = Order::create([
                 'user_id' => $request->user()->id,
+                'promo_code_id' => $promoCodeId,
                 'status' => 'new',
                 'total' => $total,
+                'discount_amount' => $discount,
                 'full_name' => $data['full_name'],
                 'phone' => $data['phone'],
                 'city' => $data['city'],
@@ -73,6 +93,10 @@ class CheckoutController extends Controller
                     'price' => $item['price'],
                     'total' => $lineTotal,
                 ]);
+            }
+
+            if ($promoCodeId) {
+                PromoCode::where('id', $promoCodeId)->increment('times_used');
             }
 
             return $order;

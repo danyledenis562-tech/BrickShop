@@ -37,8 +37,10 @@ class SocialAuthController extends Controller
         $googleName = $googleUser->getName() ?? $googleUser->getNickname() ?? 'Google User';
 
         $user = User::query()
-            ->where('google_id', $googleId)
-            ->orWhere('email', $googleEmail)
+            ->where(function ($q) use ($googleId, $googleEmail) {
+                $q->where('google_id', $googleId)
+                    ->orWhere('email', $googleEmail);
+            })
             ->first();
 
         if (! $user) {

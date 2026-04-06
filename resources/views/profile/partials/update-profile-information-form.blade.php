@@ -1,6 +1,10 @@
 @php
     /** @var \App\Models\User $user */
-    $avatarUrl = $user->avatar ? route('media.public', ['path' => ltrim($user->avatar, '/')]) : null;
+    $avatarPath = $user->avatar ? ltrim($user->avatar, '/') : null;
+    if ($avatarPath && \Illuminate\Support\Str::startsWith($avatarPath, 'storage/')) {
+        $avatarPath = \Illuminate\Support\Str::after($avatarPath, 'storage/');
+    }
+    $avatarUrl = $avatarPath ? route('media.public', ['path' => $avatarPath]) : null;
 @endphp
 
 <section>

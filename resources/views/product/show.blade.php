@@ -17,11 +17,15 @@
         if (! $path) {
             return null;
         }
+        $normalizedPath = ltrim($path, '/');
+        if (\Illuminate\Support\Str::startsWith($normalizedPath, 'storage/')) {
+            $normalizedPath = \Illuminate\Support\Str::after($normalizedPath, 'storage/');
+        }
 
         return match (true) {
             \Illuminate\Support\Str::startsWith($path, ['http://', 'https://']) => $path,
             \Illuminate\Support\Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
-            default => route('media.public', ['path' => ltrim($path, '/')]),
+            default => route('media.public', ['path' => $normalizedPath]),
         };
     };
     $firstUrl = $galleryUrl($galleryRows->first()?->path);

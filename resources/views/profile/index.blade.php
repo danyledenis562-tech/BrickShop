@@ -1,6 +1,10 @@
 <x-app-layout>
     @php
-        $avatarUrl = $user->avatar ? route('media.public', ['path' => ltrim($user->avatar, '/')]) : null;
+        $avatarPath = $user->avatar ? ltrim($user->avatar, '/') : null;
+        if ($avatarPath && \Illuminate\Support\Str::startsWith($avatarPath, 'storage/')) {
+            $avatarPath = \Illuminate\Support\Str::after($avatarPath, 'storage/');
+        }
+        $avatarUrl = $avatarPath ? route('media.public', ['path' => $avatarPath]) : null;
     @endphp
         <div class="mx-auto max-w-6xl px-4 py-10">
         <div class="lego-card p-6 profile-hero">

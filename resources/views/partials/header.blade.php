@@ -6,9 +6,7 @@
 
 <header class="lego-nav">
     <div class="lego-header mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:gap-6">
-        <a href="{{ route('welcome') }}" class="lego-logo" aria-label="Brick Shop">
-            <img src="{{ asset('images/brickshop-logo.png') }}" alt="Brick Shop" class="lego-logo-img">
-        </a>
+        <x-site-logo />
 
         @can('admin')
             <div class="ml-auto flex items-center gap-3">

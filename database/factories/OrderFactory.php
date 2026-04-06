@@ -27,6 +27,7 @@ class OrderFactory extends Factory
             'delivery_type' => 'nova',
             'payment_type' => 'card',
             'note' => null,
+            'dont_call' => false,
         ];
     }
 }

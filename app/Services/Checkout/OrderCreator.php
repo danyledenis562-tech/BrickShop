@@ -61,6 +61,7 @@ final class OrderCreator
                 'delivery_type' => $quote->deliveryType,
                 'payment_type' => $validated['payment_type'],
                 'note' => $validated['note'] ?? null,
+                'dont_call' => (bool) ($validated['dont_call'] ?? false),
             ]);
 
             foreach ($cart as $item) {

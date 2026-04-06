@@ -55,6 +55,7 @@ class CheckoutTest extends TestCase
                 'nova_branch' => 'Branch 1',
                 'payment_type' => 'card',
                 'note' => null,
+                'dont_call' => '1',
             ])
             ->assertRedirect();
 
@@ -63,6 +64,7 @@ class CheckoutTest extends TestCase
         $this->assertSame($user->id, $order->user_id);
         $this->assertSame('new', $order->status->value);
         $this->assertSame(150.0, (float) $order->total);
+        $this->assertTrue($order->dont_call);
         $this->assertDatabaseCount('order_items', 1);
         $this->assertEmpty(session('cart'));
 

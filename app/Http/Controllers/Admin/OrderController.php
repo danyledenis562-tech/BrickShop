@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStatusRequest;
+use App\Mail\OrderTrackingMail;
 use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse as SymfonyStreamedResponse;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -34,7 +38,45 @@ class OrderController extends Controller
 
     public function update(OrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $order->update($request->validated());
+        $validated = $request->validated();
+
+        $newTtn = array_key_exists('tracking_number', $validated)
+            ? trim((string) $validated['tracking_number'])
+            : trim((string) ($order->tracking_number ?? ''));
+        $newTtn = $newTtn === '' ? null : $newTtn;
+
+        $oldTtnRaw = $order->tracking_number;
+        $oldTtn = ($oldTtnRaw !== null && $oldTtnRaw !== '')
+            ? trim((string) $oldTtnRaw)
+            : null;
+
+        $order->status = $validated['status'];
+        $order->tracking_number = $newTtn;
+        $order->tracking_url = null;
+        $order->save();
+
+        if ($newTtn !== null && $newTtn !== $oldTtn) {
+            $orderId = $order->id;
+            dispatch(function () use ($orderId): void {
+                $fresh = Order::query()->with('items.product')->find($orderId);
+                if (! $fresh || ! $fresh->tracking_number) {
+                    return;
+                }
+                $email = $fresh->customerEmail();
+                if (! $email) {
+                    return;
+                }
+                try {
+                    Mail::to($email)->send(new OrderTrackingMail($fresh));
+                } catch (Throwable $e) {
+                    Log::warning('Order tracking email failed', [
+                        'order_id' => $fresh->id,
+                        'email' => $email,
+                        'message' => $e->getMessage(),
+                    ]);
+                }
+            })->afterResponse();
+        }
 
         return back()->with('toast', __('messages.order_updated'));
     }
@@ -68,6 +110,9 @@ class OrderController extends Controller
                 __('messages.guest_email'),
                 __('messages.full_name'),
                 __('messages.phone'),
+                __('messages.city'),
+                __('messages.address'),
+                __('messages.dont_call_confirm'),
                 __('messages.status'),
                 __('messages.total'),
                 __('messages.discount'),
@@ -82,6 +127,9 @@ class OrderController extends Controller
                     $order->guest_email ?? '',
                     $order->full_name,
                     $order->phone,
+                    $order->city ?? '',
+                    $order->address ?? '',
+                    $order->dont_call ? '1' : '0',
                     $order->status->value,
                     $order->total,
                     $order->discount_amount ?? 0,

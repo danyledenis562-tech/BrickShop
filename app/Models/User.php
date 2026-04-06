@@ -26,6 +26,7 @@ class User extends Authenticatable
         'city',
         'address',
         'avatar',
+        'bonus_balance',
     ];
 
     /**
@@ -68,6 +69,48 @@ class User extends Authenticatable
         return $this->belongsToMany(Product::class, 'recently_viewed')
             ->withPivot('viewed_at')
             ->withTimestamps();
+    }
+
+    public function bonusTransactions()
+    {
+        return $this->hasMany(BonusTransaction::class);
+    }
+
+    public function addBonus(int $amount, ?string $description = null, ?Order $order = null): void
+    {
+        if ($amount <= 0) {
+            return;
+        }
+
+        $this->increment('bonus_balance', $amount);
+
+        $this->bonusTransactions()->create([
+            'order_id' => $order?->id,
+            'type' => 'earn',
+            'amount' => $amount,
+            'description' => $description,
+        ]);
+    }
+
+    public function spendBonus(int $amount, ?string $description = null, ?Order $order = null): int
+    {
+        $amount = max(0, $amount);
+        $amount = min($amount, $this->bonus_balance);
+
+        if ($amount <= 0) {
+            return 0;
+        }
+
+        $this->decrement('bonus_balance', $amount);
+
+        $this->bonusTransactions()->create([
+            'order_id' => $order?->id,
+            'type' => 'spend',
+            'amount' => -$amount,
+            'description' => $description,
+        ]);
+
+        return $amount;
     }
 
     public function isAdmin(): bool

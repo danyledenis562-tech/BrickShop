@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Orders</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.orders') }}</x-slot>
 
     <div class="flex flex-wrap items-center justify-between gap-4">
         <h1 class="text-2xl font-bold">{{ __('messages.orders') }}</h1>
@@ -14,7 +14,7 @@
         <select name="status" class="lego-input">
             <option value="">{{ __('messages.status') }}</option>
             @foreach (['new','paid','processing','shipped','canceled'] as $status)
-                <option value="{{ $status }}" @selected(request('status') === $status)>{{ $status }}</option>
+                <option value="{{ $status }}" @selected(request('status') === $status)>{{ __('messages.order_status_'.$status) }}</option>
             @endforeach
         </select>
         <input name="date" value="{{ request('date') }}" type="date" class="lego-input">
@@ -35,18 +35,27 @@
             <tbody>
                 @foreach ($orders as $order)
                     @php
+                        $statusRaw = $order->status;
+                        if ($statusRaw instanceof \BackedEnum) {
+                            $statusKey = (string) $statusRaw->value;
+                        } elseif (is_string($statusRaw)) {
+                            $statusKey = $statusRaw;
+                        } else {
+                            $statusKey = '';
+                        }
                         $badgeMap = [
                             'new' => 'badge-new',
                             'paid' => 'badge-paid',
                             'processing' => 'badge-processing',
                             'shipped' => 'badge-shipped',
+                            'canceled' => 'badge-canceled',
                         ];
-                        $badgeClass = $badgeMap[$order->status] ?? 'badge-processing';
+                        $badgeClass = $badgeMap[$statusKey] ?? 'badge-processing';
                     @endphp
                     <tr>
                         <td>#{{ $order->id }}</td>
                         <td>{{ $order->user?->email }}</td>
-                        <td><span class="admin-badge {{ $badgeClass }}">{{ $order->status }}</span></td>
+                        <td><span class="admin-badge {{ $badgeClass }}">{{ $statusKey !== '' ? __('messages.order_status_'.$statusKey) : '—' }}</span></td>
                         <td>{{ number_format($order->total, 2) }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.orders.show', $order) }}" class="admin-icon-btn" aria-label="{{ __('messages.view') }}">

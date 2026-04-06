@@ -12,7 +12,7 @@ class SettingController extends Controller
 {
     public function edit(): View
     {
-        $setting = Setting::query()->first() ?? new Setting();
+        $setting = Setting::query()->first() ?? new Setting;
 
         return view('admin.settings.edit', compact('setting'));
     }

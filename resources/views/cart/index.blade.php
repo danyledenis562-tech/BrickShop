@@ -9,7 +9,7 @@
                 @foreach ($cart as $item)
                     <div class="lego-card flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="h-20 w-24 overflow-hidden rounded-xl bg-[color:var(--lego-yellow)]">
+                            <div class="h-20 w-24 overflow-hidden rounded-xl bg-[color:var(--product-photo-bg)]">
                                 <x-product-image :path="$item['image']" :alt="$item['name']" class="h-full w-full object-cover" />
                             </div>
                             <div>
@@ -41,9 +41,10 @@
                         <a href="{{ route('checkout.index') }}" class="lego-btn lego-btn-primary">{{ __('messages.checkout') }}</a>
                     @else
                         <div class="lego-alert">
-                            {{ __('messages.checkout_login_required') }}
+                            {{ __('messages.checkout_guest_ok') }}
                         </div>
-                        <a href="{{ route('login') }}" class="mt-3 inline-block lego-btn lego-btn-secondary">{{ __('messages.login_to_checkout') }}</a>
+                        <a href="{{ route('checkout.index') }}" class="mt-3 inline-block lego-btn lego-btn-primary">{{ __('messages.checkout') }}</a>
+                        <a href="{{ route('login') }}" class="mt-3 ms-2 inline-block lego-btn lego-btn-secondary">{{ __('messages.login_to_checkout') }}</a>
                     @endauth
                 </div>
             </div>

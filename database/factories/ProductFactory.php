@@ -17,10 +17,12 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->words(3, true);
+
         return [
             'category_id' => \App\Models\Category::factory(),
             'name' => $name,
             'slug' => \Illuminate\Support\Str::slug($name),
+            'set_number' => fake()->optional(0.85)->numerify('#####'),
             'price' => fake()->randomFloat(2, 10, 500),
             'stock' => fake()->numberBetween(0, 100),
             'age' => fake()->optional(0.7)->numberBetween(4, 16),
@@ -34,5 +36,22 @@ class ProductFactory extends Factory
             'is_active' => true,
             'popularity' => 0,
         ];
+    }
+
+    /**
+     * @param  int  $count  Number of gallery images (first is main).
+     */
+    public function withGalleryImages(int $count = 4): static
+    {
+        return $this->afterCreating(function (\App\Models\Product $product) use ($count) {
+            for ($i = 0; $i < $count; $i++) {
+                \App\Models\ProductImage::factory()
+                    ->for($product)
+                    ->create([
+                        'is_main' => $i === 0,
+                        'path' => 'https://picsum.photos/seed/p'.$product->id.'-'.$i.'/800/800',
+                    ]);
+            }
+        });
     }
 }

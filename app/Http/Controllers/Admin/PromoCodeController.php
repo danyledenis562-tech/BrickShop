@@ -50,7 +50,7 @@ class PromoCodeController extends Controller
     public function update(Request $request, PromoCode $promo_code): RedirectResponse
     {
         $data = $request->validate([
-            'code' => ['required', 'string', 'max:50', 'unique:promo_codes,code,' . $promo_code->id],
+            'code' => ['required', 'string', 'max:50', 'unique:promo_codes,code,'.$promo_code->id],
             'type' => ['required', 'in:percent,fixed'],
             'value' => ['required', 'numeric', 'min:0'],
             'valid_from' => ['nullable', 'date'],

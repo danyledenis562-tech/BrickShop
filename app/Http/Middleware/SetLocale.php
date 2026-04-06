@@ -25,7 +25,10 @@ class SetLocale
         app()->setLocale($locale);
         $request->session()->put('locale', $locale);
 
-        cookie()->queue(cookie('locale', $locale, 60 * 24 * 30));
+        // Avoid overriding explicit locale switch response cookie.
+        if (! $request->routeIs('locale.switch')) {
+            cookie()->queue(cookie('locale', $locale, 60 * 24 * 30));
+        }
 
         return $next($request);
     }

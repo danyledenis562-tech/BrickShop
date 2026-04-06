@@ -24,7 +24,7 @@ class OrderFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'city' => fake()->city(),
             'address' => fake()->streetAddress(),
-            'delivery_type' => 'nova_poshta',
+            'delivery_type' => 'nova',
             'payment_type' => 'card',
             'note' => null,
         ];

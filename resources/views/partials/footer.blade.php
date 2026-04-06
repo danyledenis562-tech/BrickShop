@@ -3,7 +3,7 @@
 @endphp
 
 <footer class="mt-16 border-t border-[color:var(--border)] bg-[color:var(--card)]">
-    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-4">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-2 lg:grid-cols-5">
         <div>
             <div class="text-2xl font-extrabold">Brick Shop</div>
             <p class="mt-3 text-sm text-[color:var(--muted)]">{{ __('messages.footer_tagline') }}</p>
@@ -35,12 +35,22 @@
         </div>
 
         <div>
+            <div class="text-sm font-bold uppercase">{{ __('messages.newsletter_title') }}</div>
+            <p class="mt-2 text-xs text-[color:var(--muted)]">{{ __('messages.newsletter_hint') }}</p>
+            <form method="POST" action="{{ route('newsletter.subscribe') }}" class="mt-3 flex flex-col gap-2 sm:flex-row">
+                @csrf
+                <input type="email" name="email" required class="lego-input flex-1 text-sm" placeholder="{{ __('messages.email') }}">
+                <button type="submit" class="lego-btn lego-btn-primary text-sm shrink-0">{{ __('messages.newsletter_submit') }}</button>
+            </form>
+        </div>
+
+        <div>
             <div class="text-sm font-bold uppercase">{{ __('messages.footer_support') }}</div>
             <div class="mt-3 space-y-2 text-sm text-[color:var(--muted)]">
                 <div>{{ __('messages.support_phone') }}:</div>
                 <div class="font-semibold text-[color:var(--lego-red)]">{{ $setting?->phone_support ?? '+380 00 000 00 00' }}</div>
                 <div>{{ __('messages.support_telegram') }}:</div>
-                <a href="{{ $setting?->telegram_support_url ?? 'https://t.me/' }}" target="_blank" rel="noopener" class="text-sm font-semibold text-[color:var(--lego-red)]">Telegram</a>
+                <a href="{{ $setting?->telegram_support_url ?? 'https://t.me/' }}" target="_blank" rel="noopener" class="text-sm font-semibold text-[color:var(--lego-red)]">{{ __('messages.telegram') }}</a>
             </div>
         </div>
     </div>

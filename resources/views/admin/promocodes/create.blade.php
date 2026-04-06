@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / {{ __('messages.promo_codes') }} / {{ __('messages.new') }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.promo_codes') }} / {{ __('messages.new') }}</x-slot>
 
     <h1 class="text-2xl font-bold">{{ __('messages.promo_code_new') }}</h1>
 

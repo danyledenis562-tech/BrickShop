@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
+use App\Services\Profile\ProfileDashboardService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -17,94 +18,29 @@ class ProfileController extends Controller
     /**
      * Display the user's profile overview.
      */
-    public function index(Request $request): View
+    public function index(Request $request, ProfileDashboardService $dashboard): View
     {
-        $activeTab = $request->string('tab')->toString();
-        if (! in_array($activeTab, ['data', 'orders', 'favorites', 'recent'], true)) {
-            $activeTab = 'data';
-        }
-
-        $orders = $request->user()->orders()->with('items.product')->latest()->paginate(10);
-        $favorites = $request->user()
-            ->favorites()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->latest()
-            ->take(8)
-            ->get();
-        $recentlyViewed = $request->user()
-            ->recentlyViewedProducts()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->orderByDesc('recently_viewed.viewed_at')
-            ->take(8)
-            ->get();
+        $activeTab = $dashboard->resolveActiveTab($request);
+        $data = $dashboard->build($request->user(), $activeTab);
 
         return view('profile.index', [
             'user' => $request->user(),
-            'orders' => $orders,
-            'favorites' => $favorites,
-            'recentlyViewed' => $recentlyViewed,
-            'activeTab' => $activeTab,
+            'orders' => $data->orders,
+            'favorites' => $data->favoritesPreview,
+            'recentlyViewed' => $data->recentlyViewedPreview,
+            'bonusTransactions' => $data->bonusTransactions,
+            'activeTab' => $data->activeTab,
         ]);
     }
 
-    public function favorites(Request $request): View
+    public function favorites(Request $request): RedirectResponse
     {
-        $orders = $request->user()->orders()->with('items.product')->latest()->paginate(10);
-        $favorites = $request->user()
-            ->favorites()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->latest()
-            ->paginate(12);
-        $recentlyViewed = $request->user()
-            ->recentlyViewedProducts()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->orderByDesc('recently_viewed.viewed_at')
-            ->take(8)
-            ->get();
-
-        return view('profile.index', [
-            'user' => $request->user(),
-            'orders' => $orders,
-            'favorites' => $favorites,
-            'recentlyViewed' => $recentlyViewed,
-            'activeTab' => 'favorites',
-        ]);
+        return redirect()->route('profile.index', ['tab' => 'favorites']);
     }
 
-    public function recent(Request $request): View
+    public function recent(Request $request): RedirectResponse
     {
-        $orders = $request->user()->orders()->with('items.product')->latest()->paginate(10);
-        $favorites = $request->user()
-            ->favorites()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->latest()
-            ->take(8)
-            ->get();
-        $recentlyViewed = $request->user()
-            ->recentlyViewedProducts()
-            ->with('mainImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
-            ->orderByDesc('recently_viewed.viewed_at')
-            ->paginate(12);
-
-        return view('profile.index', [
-            'user' => $request->user(),
-            'orders' => $orders,
-            'favorites' => $favorites,
-            'recentlyViewed' => $recentlyViewed,
-            'activeTab' => 'recent',
-        ]);
+        return redirect()->route('profile.index', ['tab' => 'recent']);
     }
 
     /**
@@ -167,16 +103,36 @@ class ProfileController extends Controller
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
-        $cancellable = in_array($order->status, ['new', 'paid', 'processing'], true);
+        $cancellable = in_array($order->status->value, ['new', 'paid', 'processing'], true);
 
         if (! $cancellable) {
             return back()->with('toast', __('messages.order_cannot_cancel'));
         }
 
+        $user = $request->user();
+
         $order->update([
             'status' => 'canceled',
             'canceled_at' => now(),
         ]);
+
+        // Повертаємо списані бонуси
+        if ($order->bonus_spent > 0) {
+            $user->addBonus(
+                (int) $order->bonus_spent,
+                __('messages.bonus_refund_spent', ['id' => $order->id]),
+                $order
+            );
+        }
+
+        // Забираємо нараховані бонуси за це замовлення
+        if ($order->bonus_earned > 0) {
+            $user->spendBonus(
+                (int) $order->bonus_earned,
+                __('messages.bonus_revert_earned', ['id' => $order->id]),
+                $order
+            );
+        }
 
         return back()->with('toast', __('messages.order_canceled'));
     }

@@ -2,7 +2,7 @@
     @php
         $avatarUrl = $user->avatar ? asset('storage/'.$user->avatar) : null;
     @endphp
-    <div class="mx-auto max-w-6xl px-4 py-10">
+        <div class="mx-auto max-w-6xl px-4 py-10">
         <div class="lego-card p-6 profile-hero">
             <div class="profile-hero-main">
                 <div class="profile-avatar-lg">
@@ -17,7 +17,6 @@
                     <p class="text-sm text-[color:var(--muted)]">{{ $user->email }}</p>
                     <div class="mt-4 flex flex-wrap gap-2">
                         <a href="{{ route('profile.edit') }}" class="lego-btn lego-btn-secondary text-xs">{{ __('messages.edit_profile') }}</a>
-                        <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="lego-btn lego-btn-primary text-xs">{{ __('messages.order_history') }}</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="lego-btn lego-btn-secondary text-xs">{{ __('messages.logout') }}</button>
@@ -26,27 +25,32 @@
                 </div>
             </div>
             <div class="profile-hero-stats">
-                <div class="profile-stat">
+                <button type="button" class="profile-stat" data-tab-trigger="orders">
                     <div class="profile-stat-value">{{ $orders->total() }}</div>
                     <div class="profile-stat-label">{{ __('messages.order_history') }}</div>
-                </div>
-                <div class="profile-stat">
+                </button>
+                <button type="button" class="profile-stat" data-tab-trigger="favorites">
                     <div class="profile-stat-value">{{ $favorites->count() }}</div>
                     <div class="profile-stat-label">{{ __('messages.favorites') }}</div>
-                </div>
-                <div class="profile-stat">
+                </button>
+                <button type="button" class="profile-stat" data-tab-trigger="recent">
                     <div class="profile-stat-value">{{ $recentlyViewed->count() }}</div>
                     <div class="profile-stat-label">{{ __('messages.recently_viewed') }}</div>
-                </div>
+                </button>
+                <button type="button" class="profile-stat" data-tab-trigger="bonus">
+                    <div class="profile-stat-value">{{ $user->bonus_balance }}</div>
+                    <div class="profile-stat-label">{{ __('messages.bonus_balance_short') }}</div>
+                </button>
             </div>
         </div>
 
-        <div class="mt-6">
+        <div class="mt-6 hidden">
             <div class="flex flex-wrap gap-2" data-tabs data-default-tab="{{ $activeTab ?? 'data' }}">
                 <button class="lego-tab is-active" data-tab="data">{{ __('messages.profile_data') }}</button>
                 <button class="lego-tab" data-tab="orders">{{ __('messages.order_history') }}</button>
                 <button class="lego-tab" data-tab="favorites">{{ __('messages.favorites') }}</button>
                 <button class="lego-tab" data-tab="recent">{{ __('messages.recently_viewed') }}</button>
+                <button class="lego-tab" data-tab="bonus">{{ __('messages.bonus_tab') }}</button>
             </div>
         </div>
 
@@ -80,7 +84,11 @@
                 @forelse ($orders as $order)
                     <div class="rounded-xl border border-[color:var(--border)] p-4">
                         <div class="flex items-center justify-between">
-                            <div class="font-semibold">#{{ $order->id }} • {{ $order->status }}</div>
+                            <div class="font-semibold">
+                                {{ sprintf('#%06d', $order->id) }}
+                                •
+                                {{ __('messages.order_status_'.$order->status) }}
+                            </div>
                             <div class="text-sm text-[color:var(--muted)]">{{ $order->created_at->format('d.m.Y') }}</div>
                         </div>
                         <div class="mt-2 text-sm">
@@ -89,7 +97,17 @@
                             @endforeach
                         </div>
                         <div class="mt-2 font-semibold">{{ __('messages.total') }}: {{ number_format($order->total, 2) }} грн</div>
-                        @if (in_array($order->status, ['new', 'paid', 'processing'], true))
+                        @if ($order->tracking_number)
+                            <div class="mt-2 text-sm text-[color:var(--muted)]">
+                                {{ __('messages.tracking_number') }}:
+                                @if ($order->tracking_url)
+                                    <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener" class="font-mono font-semibold text-[color:var(--lego-blue)]">{{ $order->tracking_number }}</a>
+                                @else
+                                    <span class="font-mono font-semibold">{{ $order->tracking_number }}</span>
+                                @endif
+                            </div>
+                        @endif
+                        @if (in_array($order->status->value, ['new', 'paid', 'processing'], true))
                             <form method="POST" action="{{ route('profile.orders.cancel', $order) }}" class="mt-3">
                                 @csrf
                                 <button class="lego-btn lego-btn-primary text-xs">{{ __('messages.cancel_order') }}</button>
@@ -135,6 +153,61 @@
             @if (method_exists($recentlyViewed, 'links'))
                 <div class="mt-4">{{ $recentlyViewed->appends(request()->query())->links() }}</div>
             @endif
+        </section>
+
+        <section class="mt-6 lego-card p-6 hidden" data-tab-content="bonus">
+            <div class="grid gap-6 md:grid-cols-[1.1fr,0.9fr]">
+                <div>
+                    <h2 class="text-xl font-bold">{{ __('messages.bonus_history_title') }}</h2>
+                    <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.bonus_history_subtitle') }}</p>
+
+                    <div class="mt-4 space-y-3 text-sm">
+                        @forelse ($bonusTransactions as $tx)
+                            <div class="flex items-start justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] px-3 py-2">
+                                <div>
+                                    <div class="font-semibold">
+                                        @if ($tx->type === 'earn')
+                                            <span class="text-green-500">+{{ $tx->amount }}</span>
+                                        @else
+                                            <span class="text-purple-500">{{ $tx->amount }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="mt-1 text-xs text-[color:var(--muted)]">
+                                        {{ $tx->description ?? __('messages.bonus_tx_default') }}
+                                        @if ($tx->order)
+                                            • #{{ $tx->order->id }}
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="text-xs text-[color:var(--muted)]">
+                                    {{ $tx->created_at->format('d.m.Y H:i') }}
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-sm text-[color:var(--muted)]">{{ __('messages.bonus_empty') }}</p>
+                        @endforelse
+                    </div>
+
+                    <div class="mt-4">
+                        {{ $bonusTransactions->appends(request()->query())->links() }}
+                    </div>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4 text-sm">
+                    <div>
+                        <div class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.bonus_how_title') }}</div>
+                        <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.bonus_how_text') }}</p>
+                    </div>
+                    <ul class="mt-2 list-disc space-y-1 pl-4 text-[13px] text-[color:var(--muted)]">
+                        <li>{{ __('messages.bonus_rule_earn', ['rate' => config('shop.bonus_earn_rate', 10)]) }}</li>
+                        <li>{{ __('messages.bonus_rule_spend') }}</li>
+                        <li>{{ __('messages.bonus_rule_expire') }}</li>
+                    </ul>
+                    <p class="mt-3 text-xs text-[color:var(--muted)]">
+                        {{ __('messages.bonus_note') }}
+                    </p>
+                </div>
+            </div>
         </section>
     </div>
 </x-app-layout>

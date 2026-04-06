@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Banners</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.banners') }}</x-slot>
 
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold">{{ __('messages.banners') }}</h1>

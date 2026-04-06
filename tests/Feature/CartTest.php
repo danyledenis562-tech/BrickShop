@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +17,7 @@ class CartTest extends TestCase
 
     public function test_add_product_to_cart_redirects_back_with_toast(): void
     {
-        $product = Product::factory()->create(['slug' => 'test-set']);
+        $product = Product::factory()->create(['slug' => 'test-set', 'stock' => 10]);
 
         $this->post(route('cart.add', $product))
             ->assertRedirect()
@@ -28,7 +27,7 @@ class CartTest extends TestCase
 
     public function test_add_product_to_cart_redirects_to_checkout_when_requested(): void
     {
-        $product = Product::factory()->create(['slug' => 'test-set']);
+        $product = Product::factory()->create(['slug' => 'test-set', 'stock' => 10]);
 
         $this->post(route('cart.add', $product), ['redirect' => 'checkout'])
             ->assertRedirect(route('checkout.index'));
@@ -36,7 +35,7 @@ class CartTest extends TestCase
 
     public function test_update_cart_quantity(): void
     {
-        $product = Product::factory()->create(['slug' => 'test-set']);
+        $product = Product::factory()->create(['slug' => 'test-set', 'stock' => 10]);
         $this->post(route('cart.add', $product));
         $this->patch(route('cart.update', $product), ['quantity' => 3])
             ->assertRedirect()
@@ -56,5 +55,16 @@ class CartTest extends TestCase
 
         $cart = session('cart');
         $this->assertArrayNotHasKey((string) $product->id, $cart ?? []);
+    }
+
+    public function test_cannot_add_out_of_stock_product_to_cart(): void
+    {
+        $product = Product::factory()->create(['slug' => 'oos-set', 'stock' => 0]);
+
+        $this->post(route('cart.add', $product))
+            ->assertRedirect()
+            ->assertSessionHas('toast', __('messages.cannot_add_out_of_stock'));
+
+        $this->assertEmpty(session('cart', []));
     }
 }

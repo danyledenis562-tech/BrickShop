@@ -7,9 +7,9 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CatalogController extends Controller
@@ -23,11 +23,18 @@ class CatalogController extends Controller
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)]);
 
         if ($search = $request->string('search')->toString()) {
-            $query->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('set_number', 'like', "%{$search}%");
+            });
         }
 
+        $categories = Cache::remember('catalog.categories', now()->addMinutes(15), fn () => Category::query()->orderBy('sort_order')->get());
+
+        $currentCategory = null;
         if ($category = $request->string('category')->toString()) {
             $query->whereHas('category', fn ($q) => $q->where('slug', $category));
+            $currentCategory = $categories->firstWhere('slug', $category);
         }
 
         if ($age = $request->integer('age')) {
@@ -59,18 +66,31 @@ class CatalogController extends Controller
         };
 
         $products = $query->paginate(12);
-        $categories = Cache::remember('catalog.categories', now()->addMinutes(15), fn () => Category::query()->orderBy('sort_order')->get());
 
         $bannerTop = null;
         if (Schema::hasTable('banners')) {
+            $locale = app()->getLocale();
+
             $bannerTop = Banner::query()
                 ->where('is_active', true)
                 ->where('position', 'catalog_top')
+                ->where(function ($q) use ($locale) {
+                    $q->whereNull('locale')->orWhere('locale', $locale);
+                })
+                ->where(function ($q) {
+                    $now = now();
+                    $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
+                })
+                ->where(function ($q) {
+                    $now = now();
+                    $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
+                })
+                ->orderBy('sort_order')
                 ->latest()
                 ->first();
         }
 
-        return view('catalog.index', compact('products', 'categories', 'bannerTop'));
+        return view('catalog.index', compact('products', 'categories', 'bannerTop', 'currentCategory'));
     }
 
     public function suggestions(Request $request): JsonResponse
@@ -82,7 +102,10 @@ class CatalogController extends Controller
 
         $items = Product::query()
             ->where('is_active', true)
-            ->where('name', 'like', "%{$term}%")
+            ->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('set_number', 'like', "%{$term}%");
+            })
             ->with('mainImage')
             ->orderByDesc('popularity')
             ->limit(5)

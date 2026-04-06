@@ -1,11 +1,12 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Products / Create</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.products') }} / {{ __('messages.new') }}</x-slot>
 
     <h1 class="text-2xl font-bold">{{ __('messages.new') }} {{ __('messages.products') }}</h1>
     <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" class="mt-6 grid gap-4 lego-card p-6">
         @csrf
         <input name="name" class="lego-input" placeholder="{{ __('messages.name') }}">
-        <input name="slug" class="lego-input" placeholder="Slug">
+        <input name="slug" class="lego-input" placeholder="{{ __('messages.slug') }}">
+        <input name="set_number" class="lego-input" placeholder="{{ __('messages.set_number') }}">
         <select name="category_id" class="lego-input">
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -23,11 +24,11 @@
         <textarea name="description" class="lego-input" placeholder="{{ __('messages.description') }}"></textarea>
         <label class="flex items-center gap-2 text-sm">
             <input type="checkbox" name="is_featured" value="1">
-            Featured
+            {{ __('messages.featured') }}
         </label>
         <label class="flex items-center gap-2 text-sm">
             <input type="checkbox" name="is_active" value="1" checked>
-            Active
+            {{ __('messages.active') }}
         </label>
         <input type="file" name="images[]" multiple class="lego-input">
         <button class="lego-btn lego-btn-primary">{{ __('messages.save') }}</button>

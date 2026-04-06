@@ -2,114 +2,121 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\OutOfStockException;
 use App\Http\Requests\CheckoutRequest;
+use App\Mail\OrderPlacedMail;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\PromoCode;
+use App\Services\Cart\CartService;
+use App\Services\Checkout\CheckoutPricingService;
+use App\Services\Checkout\OrderCreator;
+use App\Services\Payments\LiqPayService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class CheckoutController extends Controller
 {
-    public function index(Request $request): View|RedirectResponse
+    public function index(Request $request, CheckoutPricingService $pricing, CartService $cartService): View|RedirectResponse
     {
-        $cart = $request->session()->get('cart', []);
+        $lines = $cartService->getLines($request);
 
-        if (empty($cart)) {
+        if (empty($lines)) {
             return redirect()->route('cart.index')->with('toast', __('messages.cart_empty'));
         }
 
-        $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
-        $discount = 0.0;
-        $appliedPromo = null;
+        $quote = $pricing->quoteFromLines($request, $lines);
 
-        if ($promoInput = $request->string('promo_code')->trim()->toString()) {
-            $promo = PromoCode::where('code', $promoInput)->first();
-            if ($promo && $promo->isValid()) {
-                $appliedPromo = $promo;
-                $discount = $promo->applyDiscount($subtotal);
-            }
-        }
+        $subtotal = $quote->subtotal;
+        $discount = $quote->discount;
+        $shippingAmount = $quote->shippingAmount;
+        $deliveryType = $quote->deliveryType;
+        $total = $quote->total;
+        $appliedPromo = $quote->appliedPromo;
+        $bonusBalance = $quote->bonusBalance;
+        $bonusToSpend = $quote->bonusToSpend;
+        $maxBonusUsable = $quote->maxBonusUsable;
+        $previewBonusEarn = $quote->previewBonusEarn;
+        $earnRate = $quote->earnRate;
 
-        $total = round($subtotal - $discount, 2);
+        $cart = $lines;
 
-        return view('checkout.index', compact('cart', 'subtotal', 'discount', 'total', 'appliedPromo'));
+        return view('checkout.index', compact(
+            'cart',
+            'subtotal',
+            'discount',
+            'shippingAmount',
+            'deliveryType',
+            'total',
+            'appliedPromo',
+            'bonusBalance',
+            'bonusToSpend',
+            'maxBonusUsable',
+            'previewBonusEarn',
+            'earnRate'
+        ));
     }
 
-    public function store(CheckoutRequest $request): RedirectResponse
+    public function store(CheckoutRequest $request, OrderCreator $creator, CartService $cartService, LiqPayService $liqPay): RedirectResponse|View
     {
-        $cart = $request->session()->get('cart', []);
+        $lines = $cartService->getLines($request);
 
-        if (empty($cart)) {
+        if (empty($lines)) {
             return redirect()->route('cart.index')->with('toast', __('messages.cart_empty'));
         }
 
         $data = $request->validated();
+        try {
+            $order = $creator->createFromCheckout($request->user(), $data, $lines);
+        } catch (OutOfStockException) {
+            return back()
+                ->withInput()
+                ->with('toast', __('messages.product_out_of_stock'));
+        }
 
-        $subtotal = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
-        $discount = 0.0;
-        $promoCodeId = null;
+        $cartService->clear($request);
 
-        if (! empty($data['promo_code'])) {
-            $promo = PromoCode::where('code', $data['promo_code'])->first();
-            if ($promo && $promo->isValid()) {
-                $discount = $promo->applyDiscount($subtotal);
-                $promoCodeId = $promo->id;
+        $order->load('items.product');
+
+        $email = $order->guest_email ?? $order->user?->email;
+        if ($email) {
+            try {
+                Mail::to($email)->send(new OrderPlacedMail($order));
+            } catch (Throwable $e) {
+                Log::warning('Order confirmation email failed', [
+                    'order_id' => $order->id,
+                    'email' => $email,
+                    'message' => $e->getMessage(),
+                ]);
             }
         }
 
-        $total = round($subtotal - $discount, 2);
-
-        $order = DB::transaction(function () use ($request, $data, $cart, $total, $discount, $promoCodeId) {
-            $order = Order::create([
-                'user_id' => $request->user()->id,
-                'promo_code_id' => $promoCodeId,
-                'status' => 'new',
-                'total' => $total,
-                'discount_amount' => $discount,
-                'full_name' => $data['full_name'],
-                'phone' => $data['phone'],
-                'city' => $data['city'],
-                'address' => $data['address'],
-                'delivery_type' => $data['delivery_type'],
-                'payment_type' => $data['payment_type'],
-                'note' => $data['note'] ?? null,
+        if (($data['payment_type'] ?? '') === 'liqpay' && $liqPay->isConfigured()) {
+            return view('checkout.liqpay-redirect', [
+                'checkout' => $liqPay->checkoutFormPayload($order),
             ]);
+        }
 
-            foreach ($cart as $item) {
-                $product = Product::find($item['product_id']);
-                if (! $product) {
-                    continue;
-                }
+        if ($request->user()) {
+            return redirect()->route('checkout.thanks', $order);
+        }
 
-                $lineTotal = $item['price'] * $item['quantity'];
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'total' => $lineTotal,
-                ]);
-            }
-
-            if ($promoCodeId) {
-                PromoCode::where('id', $promoCodeId)->increment('times_used');
-            }
-
-            return $order;
-        });
-
-        $request->session()->forget('cart');
-
-        return redirect()->route('checkout.thanks', $order);
+        return redirect()->signedRoute('checkout.thanks', ['order' => $order]);
     }
 
-    public function thanks(Order $order): View
+    public function thanks(Request $request, Order $order): View
     {
-        abort_unless($order->user_id === auth()->id(), 403);
+        $allowed = false;
+        if ($request->hasValidSignature()) {
+            $allowed = true;
+        } elseif (auth()->check() && $order->user_id && (int) $order->user_id === (int) auth()->id()) {
+            $allowed = true;
+        }
+
+        abort_unless($allowed, 403);
+
         $order->load('items.product');
 
         return view('checkout.thanks', compact('order'));

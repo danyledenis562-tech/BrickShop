@@ -32,4 +32,16 @@ class CatalogTest extends TestCase
             ->assertStatus(200)
             ->assertSeeText($product->name);
     }
+
+    public function test_product_show_renders_gallery_thumbnails_when_multiple_images(): void
+    {
+        $product = Product::factory()
+            ->withGalleryImages(4)
+            ->create(['slug' => 'gallery-product', 'stock' => 5]);
+
+        $this->get(route('product.show', $product))
+            ->assertStatus(200)
+            ->assertSee('data-gallery-thumb')
+            ->assertSee('data-gallery-main');
+    }
 }

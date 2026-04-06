@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="lego-auth-header">
-        <a href="{{ route('welcome') }}" class="lego-auth-logo">Brick Shop</a>
+        <x-site-logo variant="auth" />
         <p class="lego-auth-subtitle">{{ __('messages.register_subtitle') }}</p>
     </div>
 

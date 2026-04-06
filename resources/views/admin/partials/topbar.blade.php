@@ -4,17 +4,17 @@
     <div class="admin-topbar-inner">
         <div class="admin-breadcrumbs">{{ $breadcrumb }}</div>
         <div class="admin-top-actions">
-            <a href="{{ route('welcome') }}" class="admin-pill" title="На сайт">
+            <a href="{{ route('welcome') }}" class="admin-pill" title="{{ __('messages.go_to_site') }}">
                 <span>↗</span>
-                На сайт
+                {{ __('messages.go_to_site') }}
             </a>
             <details class="relative">
                 <summary class="admin-avatar cursor-pointer">A</summary>
                 <div class="absolute right-0 mt-3 w-40 rounded-2xl border border-[color:var(--border-soft)] bg-[color:var(--bg-card)] p-2 shadow-lg">
-                    <a href="{{ route('profile.index') }}" class="block rounded-xl px-3 py-2 text-sm hover:bg-[color:var(--bg-hover)]">Профіль</a>
+                    <a href="{{ route('profile.index') }}" class="block rounded-xl px-3 py-2 text-sm hover:bg-[color:var(--bg-hover)]">{{ __('messages.profile') }}</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left rounded-xl px-3 py-2 text-sm hover:bg-[color:var(--bg-hover)]">Вийти</button>
+                        <button type="submit" class="w-full text-left rounded-xl px-3 py-2 text-sm hover:bg-[color:var(--bg-hover)]">{{ __('messages.logout') }}</button>
                     </form>
                 </div>
             </details>

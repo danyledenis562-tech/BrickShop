@@ -11,6 +11,8 @@
     $isSale = $product->old_price && $product->old_price > $product->price;
     $rating = number_format($product->reviews_avg_rating ?? 0, 1);
     $imageHeight = $size === 'compact' ? 'h-36' : 'h-44';
+    $lowTh = (int) config('shop.low_stock_threshold', 5);
+    $isLowStock = $product->stock > 0 && $product->stock <= $lowTh;
 @endphp
 
 <div class="lego-card lego-product relative p-4">
@@ -34,14 +36,18 @@
             </div>
         @endif
 
-        <div class="lego-brick {{ $imageHeight }} bg-[color:var(--lego-yellow)]">
+        <div class="lego-brick lego-product-photo {{ $imageHeight }}">
             <x-product-image :path="$product->mainImage?->path" :alt="$product->name" class="h-full w-full object-cover" />
             @if ($showActions)
                 <div class="lego-card-actions z-20">
-                    <form method="POST" action="{{ route('cart.add', $product) }}">
-                        @csrf
-                        <button class="lego-btn lego-btn-primary text-xs">{{ __('messages.add_to_cart') }}</button>
-                    </form>
+                    @if ($product->stock > 0)
+                        <form method="POST" action="{{ route('cart.add', $product) }}">
+                            @csrf
+                            <button type="submit" class="lego-btn lego-btn-primary text-xs cursor-pointer">{{ __('messages.add_to_cart') }}</button>
+                        </form>
+                    @else
+                        <button type="button" class="lego-btn lego-btn-primary lego-btn-disabled text-xs" disabled aria-disabled="true">{{ __('messages.add_to_cart') }}</button>
+                    @endif
                     <form method="POST" action="{{ route('favorites.store', $product) }}">
                         @csrf
                         <button class="lego-btn lego-btn-secondary text-xs">♥ {{ __('messages.favorite') }}</button>
@@ -59,7 +65,15 @@
                 @endif
             </div>
             <div class="mt-1 flex items-center justify-between text-xs text-[color:var(--muted)]">
-                <span>{{ $product->stock > 0 ? __('messages.in_stock') : __('messages.out_of_stock') }}</span>
+                <span>
+                    @if ($product->stock <= 0)
+                        {{ __('messages.out_of_stock') }}
+                    @elseif ($isLowStock)
+                        {{ __('messages.low_stock_left', ['count' => $product->stock]) }}
+                    @else
+                        {{ __('messages.in_stock') }}
+                    @endif
+                </span>
                 <span>★ {{ $rating }} ({{ $product->reviews_count ?? 0 }})</span>
             </div>
         </div>

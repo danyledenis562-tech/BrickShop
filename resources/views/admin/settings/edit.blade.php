@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Settings</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.settings') }}</x-slot>
 
     <h1 class="text-2xl font-bold">{{ __('messages.settings') }}</h1>
     <form method="POST" action="{{ route('admin.settings.update') }}" class="mt-6 lego-card p-6 space-y-4">

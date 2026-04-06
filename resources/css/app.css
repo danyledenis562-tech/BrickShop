@@ -37,6 +37,8 @@
         --shadow: rgba(17, 24, 39, 0.12);
         --shadow-strong: rgba(17, 24, 39, 0.2);
         --lego-bg: #fff7cc;
+        /* Нейтральний фон під фото товару (не жовтий LEGO — щоб не «забарвлювало» картинки) */
+        --product-photo-bg: #f3f4f6;
     }
 
     [data-theme="dark"] {
@@ -47,6 +49,7 @@
         --border: rgba(248, 250, 252, 0.08);
         --shadow: rgba(0, 0, 0, 0.4);
         --shadow-strong: rgba(0, 0, 0, 0.6);
+        --product-photo-bg: #1e293b;
     }
 
     body {
@@ -98,6 +101,26 @@
 }
 
 @layer components {
+    .np-branch-card {
+        @apply w-full text-left rounded-xl px-3 py-2.5 space-y-0.5;
+        @apply bg-[color:var(--card)] border border-[color:var(--border)];
+        @apply transition-colors transition-shadow duration-150;
+        @apply hover:bg-[color:var(--card)]/80 hover:border-emerald-400/70;
+        @apply cursor-pointer;
+    }
+
+    .np-branch-card.is-active {
+        @apply border-emerald-400;
+        box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
+    }
+
+    .np-branch-card-name {
+        @apply text-sm font-semibold text-[color:var(--foreground)];
+    }
+
+    .np-branch-card-address {
+        @apply text-xs text-[color:var(--muted)];
+    }
     .lego-btn {
         @apply inline-flex items-center justify-center px-5 py-2 font-semibold transition duration-200;
         border-radius: var(--radius-md);
@@ -165,11 +188,40 @@
         pointer-events: none;
     }
 
+    /* Фото товару: без жовтого підкладу та без «цеглинкових» блисків поверх зображення */
+    .lego-product-photo {
+        background: var(--product-photo-bg) !important;
+    }
+
+    .lego-product-photo:before,
+    .lego-product-photo:after {
+        display: none;
+    }
+
     .lego-input {
         @apply w-full rounded-xl border px-4 py-2 focus:outline-none focus:ring-2;
         border-color: var(--border);
         background: var(--card);
         color: var(--text);
+    }
+
+    .lego-input.is-loading {
+        background-image: linear-gradient(90deg, rgba(17, 24, 39, 0.06), rgba(17, 24, 39, 0.02));
+        background-size: 200% 100%;
+        animation: lego-shimmer 1.1s ease-in-out infinite;
+    }
+
+    [data-theme="dark"] .lego-input.is-loading {
+        background-image: linear-gradient(90deg, rgba(248, 250, 252, 0.08), rgba(248, 250, 252, 0.02));
+    }
+
+    @keyframes lego-shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
     }
 
     .lego-badge {
@@ -486,6 +538,49 @@
 
     .product-magnifier.is-active .magnifier-lens {
         opacity: 1;
+    }
+
+    .product-gallery-main-img {
+        @apply transition-opacity duration-200 ease-out;
+    }
+
+    .product-gallery-main-img.is-fading {
+        opacity: 0;
+    }
+
+    .product-gallery-thumbs {
+        @apply flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:gap-2.5;
+    }
+
+    .product-gallery-thumb {
+        @apply shrink-0 rounded-xl border-2 border-transparent overflow-hidden p-0 bg-transparent cursor-pointer transition-[border-color,opacity,box-shadow,transform] duration-200 ease-out;
+        opacity: 0.82;
+    }
+
+    .product-gallery-thumb:hover {
+        @apply scale-[1.03];
+        opacity: 1;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .product-gallery-thumb:focus-visible {
+        outline: 2px solid var(--lego-yellow, #facc15);
+        outline-offset: 2px;
+    }
+
+    .product-gallery-thumb.is-active {
+        border-color: var(--lego-yellow, #facc15);
+        box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.35);
+        opacity: 1;
+    }
+
+    .product-gallery-thumb img {
+        @apply h-16 w-16 object-cover sm:h-[4.5rem] sm:w-[4.5rem];
+    }
+
+    .lego-btn-disabled,
+    .lego-btn:disabled {
+        @apply cursor-not-allowed opacity-50 pointer-events-none;
     }
 
     .lego-category-card {
@@ -949,6 +1044,70 @@
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
+    .checkout-grid-comfy {
+        grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+        align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+        .checkout-grid-comfy {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .checkout-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .checkout-progress-step {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .checkout-progress-step span {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(22, 163, 74, 0.15);
+        color: #16a34a;
+        font-size: 0.72rem;
+    }
+
+    .checkout-progress-step.is-active,
+    .checkout-progress-step.is-done {
+        border-color: rgba(22, 163, 74, 0.45);
+        color: var(--text);
+    }
+
+    .checkout-progress-step.is-active span,
+    .checkout-progress-step.is-done span {
+        background: #16a34a;
+        color: #fff;
+    }
+
+    .checkout-stage {
+        display: none;
+    }
+
+    .checkout-stage.is-active {
+        display: grid;
+    }
+
     .checkout-steps {
         display: grid;
         gap: 1rem;
@@ -1017,6 +1176,200 @@
         padding-left: 42px;
     }
 
+    .checkout-suggest-list {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 30;
+        max-height: 280px;
+        overflow: auto;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+        background: var(--card);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+        padding: 0.4rem;
+    }
+
+    .checkout-suggest-list-top {
+        top: auto;
+        bottom: calc(100% + 6px);
+    }
+
+    .checkout-suggest-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border-radius: 10px;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.84rem;
+        line-height: 1.3;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        color: var(--text);
+        margin-bottom: 0.35rem;
+    }
+
+    .checkout-suggest-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .checkout-suggest-item:hover {
+        background: rgba(22, 163, 74, 0.12);
+        border-color: rgba(22, 163, 74, 0.45);
+    }
+
+    .checkout-suggest-item.is-active {
+        background: rgba(22, 163, 74, 0.16);
+        border-color: rgba(22, 163, 74, 0.55);
+        box-shadow: 0 12px 24px rgba(22, 163, 74, 0.12);
+    }
+
+    .lego-radio-card {
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        padding: 0.95rem 1rem;
+        cursor: pointer;
+        transition: 0.16s ease;
+        user-select: none;
+    }
+
+    .lego-radio-card:hover {
+        border-color: rgba(255, 213, 0, 0.55);
+        transform: translateY(-1px);
+    }
+
+    .lego-radio-card.is-selected {
+        border-color: rgba(22, 163, 74, 0.6);
+        box-shadow: 0 14px 26px rgba(22, 163, 74, 0.14);
+        background: rgba(22, 163, 74, 0.06);
+    }
+
+    .checkout-suggest-item-title {
+        display: block;
+        font-weight: 700;
+    }
+
+    .checkout-suggest-item-subtitle {
+        display: block;
+        margin-top: 0.15rem;
+        font-size: 0.74rem;
+        color: var(--muted);
+    }
+
+    .checkout-suggest-message {
+        padding: 0.8rem 0.7rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        align-items: flex-start;
+        color: var(--muted);
+        font-size: 0.88rem;
+    }
+
+    .checkout-spinner {
+        width: 18px;
+        height: 18px;
+        border-radius: 9999px;
+        border: 2px solid rgba(148, 163, 184, 0.35);
+        border-top-color: var(--lego-yellow);
+        animation: checkout-spin 0.8s linear infinite;
+    }
+
+    .checkout-loading-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkout-error {
+        @apply mt-1 text-xs text-red-500;
+    }
+
+    .lego-input-error {
+        @apply border-red-500 ring-2 ring-red-500/40;
+    }
+
+    .lego-checkbox {
+        @apply relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[color:var(--border)] bg-[color:var(--card)] cursor-pointer;
+    }
+
+    .lego-checkbox-inner {
+        @apply h-3 w-3 rounded-sm bg-emerald-400 opacity-0 transition-opacity;
+    }
+
+    .lego-checkbox-input:checked + .lego-checkbox .lego-checkbox-inner {
+        @apply opacity-100;
+    }
+
+    /* Nova Poshta custom dropdown (new) */
+    .np-dropdown {
+        position: relative;
+    }
+
+    .np-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 40;
+        background: #1f2937;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 14px;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+        max-height: 320px;
+        overflow: auto;
+        padding: 0.45rem;
+    }
+
+    .np-dropdown-message {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.85rem 0.75rem;
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 0.9rem;
+    }
+
+    .np-dropdown-item {
+        width: 100%;
+        text-align: left;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 0.6rem 0.75rem;
+        color: rgba(248, 250, 252, 0.95);
+        margin-bottom: 0.4rem;
+        transition: 0.12s ease;
+    }
+
+    .np-dropdown-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .np-dropdown-item:hover,
+    .np-dropdown-item.is-active {
+        background: rgba(255, 213, 0, 0.12);
+        border-color: rgba(255, 213, 0, 0.35);
+    }
+
+    .np-dropdown-item-title {
+        display: block;
+        font-weight: 700;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    @keyframes checkout-spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     .checkout-summary {
         position: sticky;
         top: 110px;
@@ -1044,6 +1397,27 @@
         padding-top: 0.8rem;
         border-top: 2px solid var(--border);
     }
+
+    .checkout-confirm-list {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .checkout-confirm-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+        font-size: 0.92rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .checkout-confirm-item:last-child {
+        border-bottom: 0;
+    }
+
 
     .profile-hero {
         display: flex;
@@ -1387,5 +1761,22 @@
         background: var(--primary);
         color: var(--text-main);
         border-color: transparent;
+    }
+}
+
+@layer utilities {
+    @keyframes modal-scale-in {
+        0% {
+            opacity: 0;
+            transform: scale(0.92) translateY(12px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .animate-scale-in {
+        animation: modal-scale-in 0.35s ease-out forwards;
     }
 }

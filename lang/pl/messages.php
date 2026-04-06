@@ -56,6 +56,7 @@ return [
     'cart_added' => 'Dodano do koszyka.',
     'cart_updated' => 'Koszyk zaktualizowany.',
     'cart_removed' => 'Usunięto z koszyka.',
+    'cannot_add_out_of_stock' => 'Ten produkt jest niedostępny (brak na stanie) i nie można go dodać do koszyka.',
     'checkout' => 'Zamówienie',
     'checkout_login_required' => 'Zamówienie dostępne po zalogowaniu.',
     'login_to_checkout' => 'Zaloguj się, aby zamówić',

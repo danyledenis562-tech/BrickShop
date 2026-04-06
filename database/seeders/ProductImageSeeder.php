@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 class ProductImageSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Одне основне фото на товар (як у каталозі / картці). Додаткові знімки можна додати в адмінці.
      */
     public function run(): void
     {
@@ -82,14 +82,16 @@ class ProductImageSeeder extends Seeder
         ];
 
         foreach (Product::all() as $product) {
-            $path = $images[$product->slug] ?? null;
-            if (! $path) {
+            $primary = $images[$product->slug] ?? null;
+            if (! $primary) {
                 continue;
             }
 
+            $product->images()->delete();
+
             ProductImage::create([
                 'product_id' => $product->id,
-                'path' => $path,
+                'path' => $primary,
                 'is_main' => true,
             ]);
         }

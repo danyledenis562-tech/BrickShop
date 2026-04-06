@@ -16,6 +16,7 @@ class ProductRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
+            'set_number' => ['nullable', 'string', 'max:32'],
             'category_id' => ['required', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'min:0'],
             'old_price' => ['nullable', 'numeric', 'min:0'],

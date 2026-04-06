@@ -41,6 +41,7 @@ class PromoCode extends Model
         if ($this->usage_limit !== null && $this->times_used >= $this->usage_limit) {
             return false;
         }
+
         return true;
     }
 
@@ -51,6 +52,7 @@ class PromoCode extends Model
         } else {
             $discount = min((float) $this->value, $subtotal);
         }
+
         return round($discount, 2);
     }
 

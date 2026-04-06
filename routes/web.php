@@ -1,26 +1,50 @@
 <?php
 
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\PromoCodeController as AdminPromoCodeController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
-use App\Http\Controllers\Admin\BannerController as AdminBannerController;
-use App\Http\Controllers\Admin\PromoCodeController as AdminPromoCodeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\Payments\LiqPayCallbackController;
+use App\Http\Controllers\Payments\TestPaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::post('/payments/test-webhook', [TestPaymentController::class, 'webhook'])
+    ->middleware('throttle:60,1')
+    ->name('payments.test.webhook');
+
+Route::post('/payments/liqpay/callback', [LiqPayCallbackController::class, 'callback'])
+    ->middleware('throttle:120,1')
+    ->name('payments.liqpay.callback');
+
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:15,1')
+    ->name('newsletter.subscribe');
+
+Route::get('/shipping/nova/cities', [ShippingController::class, 'novaCities'])->name('shipping.nova.cities');
+Route::get('/shipping/nova/branches', [ShippingController::class, 'novaBranches'])->name('shipping.nova.branches');
+Route::get('/shipping/nova/streets', [ShippingController::class, 'novaStreets'])->name('shipping.nova.streets');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
+Route::get('/checkout/thanks/{order}', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/search-suggestions', [CatalogController::class, 'suggestions'])->name('catalog.suggestions');
@@ -35,9 +59,9 @@ Route::post('/favorites/{product:slug}', [FavoriteController::class, 'store'])->
 Route::delete('/favorites/{product:slug}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout.store');
-    Route::get('/checkout/thanks/{order}', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
+    Route::post('/checkout/pay-test/{order}', [TestPaymentController::class, 'simulate'])
+        ->middleware('throttle:10,1')
+        ->name('checkout.pay-test');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

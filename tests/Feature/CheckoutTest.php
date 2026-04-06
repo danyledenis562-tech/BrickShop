@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Mail\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class CheckoutTest extends TestCase
@@ -37,8 +39,10 @@ class CheckoutTest extends TestCase
 
     public function test_checkout_store_creates_order_and_clears_cart(): void
     {
+        Mail::fake();
+
         $user = User::factory()->create();
-        $product = Product::factory()->create(['slug' => 'test-set', 'price' => 50]);
+        $product = Product::factory()->create(['slug' => 'test-set', 'price' => 50, 'stock' => 10]);
 
         $this->actingAs($user)->post(route('cart.add', $product));
 
@@ -46,9 +50,9 @@ class CheckoutTest extends TestCase
             ->post(route('checkout.store'), [
                 'full_name' => 'Test User',
                 'phone' => '+380501234567',
-                'city' => 'Kyiv',
-                'address' => 'Street 1',
-                'delivery_type' => 'nova_poshta',
+                'delivery_type' => 'nova',
+                'nova_city' => 'Kyiv',
+                'nova_branch' => 'Branch 1',
                 'payment_type' => 'card',
                 'note' => null,
             ])
@@ -57,10 +61,14 @@ class CheckoutTest extends TestCase
         $this->assertDatabaseCount('orders', 1);
         $order = Order::first();
         $this->assertSame($user->id, $order->user_id);
-        $this->assertSame('new', $order->status);
-        $this->assertSame(50.0, (float) $order->total);
+        $this->assertSame('new', $order->status->value);
+        $this->assertSame(150.0, (float) $order->total);
         $this->assertDatabaseCount('order_items', 1);
         $this->assertEmpty(session('cart'));
+
+        Mail::assertSent(OrderPlacedMail::class, function (OrderPlacedMail $mail) use ($user): bool {
+            return $mail->hasTo($user->email);
+        });
     }
 
     public function test_checkout_thanks_only_for_own_order(): void

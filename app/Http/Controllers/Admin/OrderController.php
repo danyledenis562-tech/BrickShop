@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStatusRequest;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse as SymfonyStreamedResponse;
 
@@ -34,7 +34,7 @@ class OrderController extends Controller
 
     public function update(OrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $order->update(['status' => $request->validated()['status']]);
+        $order->update($request->validated());
 
         return back()->with('toast', __('messages.order_updated'));
     }
@@ -56,20 +56,22 @@ class OrderController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        $filename = 'orders-' . now()->format('Y-m-d') . '.csv';
+        $filename = 'orders-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($orders) {
             $out = fopen('php://output', 'w');
-            fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM
+            fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
             fputcsv($out, [
                 'ID',
                 __('messages.date'),
                 __('messages.email'),
+                __('messages.guest_email'),
                 __('messages.full_name'),
                 __('messages.phone'),
                 __('messages.status'),
                 __('messages.total'),
                 __('messages.discount'),
+                __('messages.tracking_number'),
                 'items_count',
             ]);
             foreach ($orders as $order) {
@@ -77,11 +79,13 @@ class OrderController extends Controller
                     $order->id,
                     $order->created_at->format('Y-m-d H:i'),
                     $order->user?->email ?? '',
+                    $order->guest_email ?? '',
                     $order->full_name,
                     $order->phone,
-                    $order->status,
+                    $order->status->value,
                     $order->total,
                     $order->discount_amount ?? 0,
+                    $order->tracking_number ?? '',
                     $order->items->count(),
                 ]);
             }

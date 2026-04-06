@@ -17,3 +17,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Локальні імпорти / архіви (не для репозиторію)
+/category-images.zip
+/products-for-wordpress.csv
+/product-images-for-wordpress.csv

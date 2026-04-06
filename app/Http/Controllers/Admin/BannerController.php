@@ -30,10 +30,15 @@ class BannerController extends Controller
             'image' => ['nullable', 'string', 'max:255'],
             'link_url' => ['required', 'string', 'max:255'],
             'position' => ['required', 'string', 'max:50'],
+            'locale' => ['nullable', 'string', 'max:5'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $data['is_active'] = $request->boolean('is_active');
+        $data['sort_order'] = $data['sort_order'] ?? 0;
 
         Banner::create($data);
 
@@ -53,10 +58,15 @@ class BannerController extends Controller
             'image' => ['nullable', 'string', 'max:255'],
             'link_url' => ['required', 'string', 'max:255'],
             'position' => ['required', 'string', 'max:50'],
+            'locale' => ['nullable', 'string', 'max:5'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $data['is_active'] = $request->boolean('is_active');
+        $data['sort_order'] = $data['sort_order'] ?? 0;
 
         $banner->update($data);
 

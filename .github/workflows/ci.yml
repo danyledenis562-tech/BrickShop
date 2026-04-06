@@ -1,13 +1,15 @@
-name: Tests
+name: CI
 
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
 
 jobs:
-  test:
+  php:
+    name: PHP
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +18,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_sqlite, sqlite
           coverage: none
 
       - name: Get composer cache directory
@@ -30,7 +32,7 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install composer dependencies
+      - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Prepare Laravel
@@ -38,17 +40,18 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      - name: Run PHPStan
+      - name: PHPStan
         run: composer run analyse
 
-      - name: Run tests
+      - name: PHPUnit
         env:
           DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
-          APP_URL: "http://localhost"
+          DB_DATABASE: ':memory:'
+          APP_URL: 'http://localhost'
         run: php artisan test
 
   frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,8 +62,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install npm dependencies
+      - name: npm ci
         run: npm ci
 
-      - name: Build assets
+      - name: Vite build
         run: npm run build

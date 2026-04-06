@@ -1,0 +1,47 @@
+# Blueprint для Render: Web (Docker) + PostgreSQL.
+# Dashboard → New → Blueprint → підключити репозиторій, або вручну створити БД і Web, потім зв’язати.
+#
+# Після деплою в Environment додай вручну (Render не генерує Laravel-ключ):
+#   APP_KEY=base64:...   (локально: php artisan key:generate --show)
+#   APP_URL=https://<твій-сервіс>.onrender.com
+#
+# Опційно: SEED_ON_START=true один раз для демо-даних (потім вимкни).
+
+databases:
+  - name: lego-shop-db
+    databaseName: lego_shop
+    user: lego_shop
+    plan: free
+
+services:
+  - type: web
+    name: lego-shop
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lego-shop-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      # Заповни в UI після першого деплою:
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        sync: false

@@ -1,20 +1,33 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Orders / #{{ $order->id }}</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.orders') }} / #{{ $order->id }}</x-slot>
 
     <div class="lego-card p-6">
         <h1 class="text-2xl font-bold">{{ __('messages.orders') }} #{{ $order->id }}</h1>
         <p class="text-sm text-[color:var(--muted)]">{{ $order->user?->email }}</p>
 
         <div class="mt-4">
-            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="flex gap-2">
+            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="grid gap-3 md:grid-cols-2">
                 @csrf
                 @method('PUT')
-                <select name="status" class="lego-input">
-                    @foreach (['new','paid','processing','shipped','canceled'] as $status)
-                        <option value="{{ $status }}" @selected($order->status === $status)>{{ $status }}</option>
-                    @endforeach
-                </select>
-                <button class="lego-btn lego-btn-primary text-xs">{{ __('messages.update') }}</button>
+                <div>
+                    <label class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.status') }}</label>
+                    <select name="status" class="lego-input mt-1 w-full">
+                        @foreach (['new','paid','processing','shipped','canceled'] as $status)
+                            <option value="{{ $status }}" @selected($order->status->value === $status)>{{ __('messages.order_status_'.$status) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.tracking_number') }}</label>
+                    <input type="text" name="tracking_number" class="lego-input mt-1 w-full" value="{{ old('tracking_number', $order->tracking_number) }}" placeholder="TTN">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.tracking_url') }}</label>
+                    <input type="text" name="tracking_url" class="lego-input mt-1 w-full" value="{{ old('tracking_url', $order->tracking_url) }}" placeholder="https://">
+                </div>
+                <div class="md:col-span-2">
+                    <button class="lego-btn lego-btn-primary text-xs">{{ __('messages.update') }}</button>
+                </div>
             </form>
         </div>
 

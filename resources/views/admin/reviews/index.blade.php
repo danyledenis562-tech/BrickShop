@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Reviews</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.reviews') }}</x-slot>
 
     <h1 class="text-2xl font-bold">{{ __('messages.reviews') }}</h1>
     <form class="mt-4 flex gap-2">

@@ -13,10 +13,12 @@ class DashboardController extends Controller
 {
     public function index(): View
     {
+        // Use base query so `status` stays a DB string (not OrderStatus enum keys).
         $statusCounts = Order::query()
-            ->select('status', DB::raw('count(*) as total'))
+            ->toBase()
+            ->select('status', DB::raw('count(*) as aggregate'))
             ->groupBy('status')
-            ->pluck('total', 'status');
+            ->pluck('aggregate', 'status');
 
         $sales7 = Order::query()->where('created_at', '>=', now()->subDays(7))->sum('total');
         $sales30 = Order::query()->where('created_at', '>=', now()->subDays(30))->sum('total');
@@ -35,6 +37,7 @@ class DashboardController extends Controller
         $dailyData = collect(range(6, 0))
             ->map(function ($offset) use ($dailySalesRaw) {
                 $key = now()->subDays($offset)->format('Y-m-d');
+
                 return (float) ($dailySalesRaw[$key] ?? 0);
             })
             ->values();

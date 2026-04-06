@@ -4,39 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CartRequest;
 use App\Models\Product;
+use App\Services\Cart\CartReminderService;
+use App\Services\Cart\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, CartService $cart, CartReminderService $cartReminders): View
     {
-        $cart = $this->getCart($request);
-        $total = collect($cart)->sum(fn ($item) => $item['price'] * $item['quantity']);
+        $lines = $cart->getLines($request);
+        $total = $cart->total($lines);
+        $cartReminders->syncFromSessionCart($request, $cart);
 
-        return view('cart.index', compact('cart', 'total'));
+        return view('cart.index', ['cart' => $lines, 'total' => $total]);
     }
 
-    public function add(Request $request, Product $product): RedirectResponse
+    public function add(Request $request, Product $product, CartService $cart): RedirectResponse
     {
-        $cart = $this->getCart($request);
-        $key = (string) $product->id;
-
-        if (! isset($cart[$key])) {
-            $cart[$key] = [
-                'product_id' => $product->id,
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'price' => (float) $product->price,
-                'quantity' => 1,
-                'image' => $product->mainImage?->path,
-            ];
-        } else {
-            $cart[$key]['quantity'] += 1;
+        if ($product->stock <= 0) {
+            return back()->with('toast', __('messages.cannot_add_out_of_stock'));
         }
 
-        $request->session()->put('cart', $cart);
+        $cart->add($request, $product, 1);
 
         if ($request->string('redirect')->toString() === 'checkout') {
             return redirect()->route('checkout.index');
@@ -45,36 +36,18 @@ class CartController extends Controller
         return back()->with('toast', __('messages.cart_added'));
     }
 
-    public function update(CartRequest $request, Product $product): RedirectResponse
+    public function update(CartRequest $request, Product $product, CartService $cart): RedirectResponse
     {
         $data = $request->validated();
-
-        $cart = $this->getCart($request);
-        $key = (string) $product->id;
-
-        if (isset($cart[$key])) {
-            $cart[$key]['quantity'] = $data['quantity'];
-            $request->session()->put('cart', $cart);
-        }
+        $cart->updateQuantity($request, $product, (int) $data['quantity']);
 
         return back()->with('toast', __('messages.cart_updated'));
     }
 
-    public function remove(Request $request, Product $product): RedirectResponse
+    public function remove(Request $request, Product $product, CartService $cart): RedirectResponse
     {
-        $cart = $this->getCart($request);
-        $key = (string) $product->id;
-
-        if (isset($cart[$key])) {
-            unset($cart[$key]);
-            $request->session()->put('cart', $cart);
-        }
+        $cart->remove($request, $product);
 
         return back()->with('toast', __('messages.cart_removed'));
-    }
-
-    private function getCart(Request $request): array
-    {
-        return $request->session()->get('cart', []);
     }
 }

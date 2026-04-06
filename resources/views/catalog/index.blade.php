@@ -1,11 +1,23 @@
+@section('title', __('messages.catalog').' - '.config('app.name'))
+@php
+    $catalogCrumbs = [
+        ['label' => __('messages.breadcrumb_home'), 'url' => route('welcome')],
+        ['label' => __('messages.catalog'), 'url' => null],
+    ];
+    if ($currentCategory ?? null) {
+        $catalogCrumbs[1]['url'] = route('catalog');
+        $catalogCrumbs[] = ['label' => $currentCategory->name, 'url' => null];
+    }
+@endphp
 <x-app-layout>
     <div class="mx-auto max-w-7xl px-4 py-10">
+        <x-breadcrumbs :items="$catalogCrumbs" />
         <section class="lego-card p-8">
             <h1 class="text-4xl font-extrabold">{{ __('messages.catalog') }}</h1>
             <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.catalog_subtitle') }}</p>
 
             <form method="GET" class="mt-6 grid gap-4 md:grid-cols-6">
-                <input name="search" value="{{ request('search') }}" placeholder="{{ __('messages.search') }}" class="lego-input md:col-span-2">
+                <input name="search" value="{{ request('search') }}" placeholder="{{ __('messages.search_placeholder_catalog') }}" class="lego-input md:col-span-2">
                 <select name="category" class="lego-input">
                     <option value="">{{ __('messages.all_categories') }}</option>
                     @foreach ($categories as $category)

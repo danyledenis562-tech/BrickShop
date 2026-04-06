@@ -10,7 +10,9 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::query()->updateOrCreate(
+        // firstOrCreate: пароль задається лише при першому створенні запису.
+        // updateOrCreate щоразу перезаписував би password і скидав змінені паролі після кожного seed.
+        User::query()->firstOrCreate(
             ['email' => 'admin@brickshop.test'],
             [
                 'name' => 'Brick Admin',
@@ -19,7 +21,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::query()->updateOrCreate(
+        User::query()->firstOrCreate(
             ['email' => 'user@brickshop.test'],
             [
                 'name' => 'Brick User',
@@ -44,7 +46,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($names as $index => $name) {
-            User::query()->updateOrCreate(
+            User::query()->firstOrCreate(
                 ['email' => 'user'.($index + 1).'@brickshop.test'],
                 [
                     'name' => $name,

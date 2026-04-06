@@ -27,7 +27,13 @@ class ProductController extends Controller
             $request->session()->put('recently_viewed', $recent->take(8)->values()->all());
         }
 
-        $product->load(['images', 'category', 'reviews' => fn ($q) => $q->where('approved', true)->latest(), 'reviews.user']);
+        $product->load([
+            'images' => fn ($q) => $q->orderByDesc('is_main')->orderBy('id'),
+            'mainImage',
+            'category',
+            'reviews' => fn ($q) => $q->where('approved', true)->latest(),
+            'reviews.user',
+        ]);
 
         $related = Product::query()
             ->where('is_active', true)

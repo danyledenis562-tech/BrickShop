@@ -15,10 +15,16 @@ class Banner extends Model
         'image',
         'link_url',
         'position',
+        'locale',
         'is_active',
+        'sort_order',
+        'starts_at',
+        'ends_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
     ];
 }

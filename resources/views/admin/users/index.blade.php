@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <x-slot name="breadcrumb">Admin / Users</x-slot>
+    <x-slot name="breadcrumb">{{ __('messages.admin') }} / {{ __('messages.users') }}</x-slot>
 
     <h1 class="text-2xl font-bold">{{ __('messages.users') }}</h1>
     <div class="mt-6 overflow-x-auto admin-card">

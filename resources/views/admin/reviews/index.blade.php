@@ -18,6 +18,7 @@
                     <th>{{ __('messages.products') }}</th>
                     <th>{{ __('messages.users') }}</th>
                     <th>{{ __('messages.rating') }}</th>
+                    <th>{{ __('messages.review_text') }}</th>
                     <th>{{ __('messages.status') }}</th>
                     <th></th>
                 </tr>
@@ -28,6 +29,10 @@
                         <td>{{ $review->product?->name }}</td>
                         <td>{{ $review->user?->email }}</td>
                         <td>{{ $review->rating }}</td>
+                        <td class="max-w-[420px]">
+                            <div class="max-h-20 overflow-hidden whitespace-pre-wrap text-sm">{{ $review->comment }}</div>
+                            <div class="mt-1 text-xs text-[color:var(--muted)]">{{ $review->created_at->format('d.m.Y H:i') }}</div>
+                        </td>
                         <td>
                             <span class="admin-badge {{ $review->approved ? 'badge-paid' : 'badge-processing' }}">
                                 {{ $review->approved ? __('messages.approved') : __('messages.pending') }}

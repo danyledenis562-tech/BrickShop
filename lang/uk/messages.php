@@ -173,6 +173,7 @@ return [
     'back_to_catalog' => 'Повернутись у каталог',
     'reviews' => 'Відгуки',
     'rating' => 'Рейтинг',
+    'review_text' => 'Текст відгуку',
     'review_placeholder' => 'Поділіться враженням',
     'send' => 'Надіслати',
     'login_to_review' => 'Увійдіть, щоб залишити відгук.',

@@ -18,9 +18,11 @@
             return null;
         }
 
-        return \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])
-            ? $path
-            : asset('storage/'.$path);
+        return match (true) {
+            \Illuminate\Support\Str::startsWith($path, ['http://', 'https://']) => $path,
+            \Illuminate\Support\Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
+            default => route('media.public', ['path' => ltrim($path, '/')]),
+        };
     };
     $firstUrl = $galleryUrl($galleryRows->first()?->path);
     $schemaImageUrls = $galleryRows->map(fn ($img) => $galleryUrl($img->path))->filter()->values()->all();

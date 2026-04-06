@@ -1,6 +1,6 @@
 <x-app-layout>
     @php
-        $avatarUrl = $user->avatar ? asset('storage/'.$user->avatar) : null;
+        $avatarUrl = $user->avatar ? route('media.public', ['path' => ltrim($user->avatar, '/')]) : null;
     @endphp
         <div class="mx-auto max-w-6xl px-4 py-10">
         <div class="lego-card p-6 profile-hero">

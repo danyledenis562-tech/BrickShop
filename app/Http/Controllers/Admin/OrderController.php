@@ -58,7 +58,7 @@ class OrderController extends Controller
         if ($newTtn !== null && $newTtn !== $oldTtn) {
             $orderId = $order->id;
             dispatch(function () use ($orderId): void {
-                $fresh = Order::query()->with('items.product')->find($orderId);
+                $fresh = Order::query()->find($orderId);
                 if (! $fresh || ! $fresh->tracking_number) {
                     return;
                 }

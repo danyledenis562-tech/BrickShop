@@ -26,11 +26,33 @@ final class OrderCreator
         $normalizedAddress = $this->addressNormalizer->normalize($validated);
 
         return DB::transaction(function () use ($user, $validated, $cart, $quote, $normalizedAddress) {
+            $requestedItems = collect($cart)
+                ->map(fn (array $item): array => [
+                    'product_id' => (int) ($item['product_id'] ?? 0),
+                    'quantity' => (int) ($item['quantity'] ?? 0),
+                ])
+                ->filter(fn (array $item): bool => $item['product_id'] > 0 && $item['quantity'] > 0)
+                ->values();
+
+            if ($requestedItems->isEmpty()) {
+                throw new OutOfStockException(0, 0);
+            }
+
+            $products = Product::query()
+                ->whereIn('id', $requestedItems->pluck('product_id')->all())
+                ->where('is_active', true)
+                ->get()
+                ->keyBy('id');
+
             foreach ($cart as $item) {
                 $productId = (int) ($item['product_id'] ?? 0);
                 $qty = (int) ($item['quantity'] ?? 0);
                 if ($productId <= 0 || $qty <= 0) {
                     continue;
+                }
+
+                if (! $products->has($productId)) {
+                    throw new OutOfStockException($productId, $qty);
                 }
 
                 $updated = Product::query()
@@ -64,32 +86,27 @@ final class OrderCreator
                 'dont_call' => (bool) ($validated['dont_call'] ?? false),
             ]);
 
-            foreach ($cart as $item) {
-                $productId = (int) ($item['product_id'] ?? 0);
-                if ($productId <= 0) {
+            $now = now();
+            $orderItemsPayload = [];
+            foreach ($requestedItems as $item) {
+                $product = $products->get($item['product_id']);
+                if (! $product) {
                     continue;
                 }
-
-                $product = Product::find($productId);
-                if (! $product || ! $product->is_active) {
-                    continue;
-                }
-
-                $qty = (int) ($item['quantity'] ?? 0);
-                if ($qty <= 0) {
-                    continue;
-                }
-
                 $linePrice = (float) ($product->price ?? 0);
-                $lineTotal = $linePrice * $qty;
-
-                OrderItem::create([
+                $lineTotal = $linePrice * $item['quantity'];
+                $orderItemsPayload[] = [
                     'order_id' => $order->id,
                     'product_id' => $product->id,
-                    'quantity' => $qty,
+                    'quantity' => $item['quantity'],
                     'price' => $linePrice,
                     'total' => $lineTotal,
-                ]);
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+            if ($orderItemsPayload !== []) {
+                OrderItem::query()->insert($orderItemsPayload);
             }
 
             if ($quote->appliedPromo) {

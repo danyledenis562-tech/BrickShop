@@ -157,6 +157,7 @@ return [
     'back_to_catalog' => 'Back to catalog',
     'reviews' => 'Reviews',
     'rating' => 'Rating',
+    'review_text' => 'Review text',
     'review_placeholder' => 'Share your experience',
     'send' => 'Send',
     'login_to_review' => 'Login to leave a review.',

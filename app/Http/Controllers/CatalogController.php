@@ -80,12 +80,7 @@ class CatalogController extends Controller
             ->get()
             ->map(function (Product $product) {
                 $path = $product->mainImage?->path;
-                $image = null;
-                if ($path) {
-                    $image = Str::startsWith($path, ['http://', 'https://'])
-                        ? $path
-                        : asset('storage/'.$path);
-                }
+                $image = $this->mediaUrl($path);
 
                 return [
                     'name' => $product->name,
@@ -121,5 +116,18 @@ class CatalogController extends Controller
                     ->orWhereRaw('LOWER(COALESCE(description, \'\')) LIKE ?', [$pattern]);
             });
         }
+    }
+
+    private function mediaUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        return match (true) {
+            Str::startsWith($path, ['http://', 'https://']) => $path,
+            Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
+            default => route('media.public', ['path' => ltrim($path, '/')]),
+        };
     }
 }

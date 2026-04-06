@@ -106,6 +106,7 @@ return [
     'back_to_catalog' => 'Назад в каталог',
     'reviews' => 'Отзывы',
     'rating' => 'Рейтинг',
+    'review_text' => 'Текст отзыва',
     'review_placeholder' => 'Поделитесь впечатлением',
     'send' => 'Отправить',
     'login_to_review' => 'Войдите, чтобы оставить отзыв.',

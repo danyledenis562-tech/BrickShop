@@ -1,6 +1,6 @@
 @php
     /** @var \App\Models\User $user */
-    $avatarUrl = $user->avatar ? asset('storage/'.$user->avatar) : null;
+    $avatarUrl = $user->avatar ? route('media.public', ['path' => ltrim($user->avatar, '/')]) : null;
 @endphp
 
 <section>

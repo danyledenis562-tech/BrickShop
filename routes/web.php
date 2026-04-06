@@ -13,6 +13,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\Payments\LiqPayCallbackController;
 use App\Http\Controllers\Payments\TestPaymentController;
@@ -36,6 +37,9 @@ Route::post('/payments/liqpay/callback', [LiqPayCallbackController::class, 'call
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:15,1')
     ->name('newsletter.subscribe');
+Route::get('/media/public/{path}', [MediaController::class, 'publicStorage'])
+    ->where('path', '.*')
+    ->name('media.public');
 
 Route::get('/shipping/nova/cities', [ShippingController::class, 'novaCities'])->name('shipping.nova.cities');
 Route::get('/shipping/nova/branches', [ShippingController::class, 'novaBranches'])->name('shipping.nova.branches');

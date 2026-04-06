@@ -103,6 +103,7 @@ return [
     'back_to_catalog' => 'Wróć do katalogu',
     'reviews' => 'Opinie',
     'rating' => 'Ocena',
+    'review_text' => 'Treść opinii',
     'review_placeholder' => 'Podziel się opinią',
     'send' => 'Wyślij',
     'login_to_review' => 'Zaloguj się, aby dodać opinię.',

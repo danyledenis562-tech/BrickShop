@@ -45,3 +45,6 @@ services:
         sync: false
       - key: APP_URL
         sync: false
+      # Кабінет Nova Poshta → Налаштування → Безпека → API-ключ (JSON v2)
+      - key: NOVA_POSHTA_API_KEY
+        sync: false

@@ -4,9 +4,15 @@
             @include('profile.partials.update-profile-information-form')
         </div>
 
-        <div class="lego-card p-6">
-            @include('profile.partials.update-password-form')
-        </div>
+        @unless ($user->registeredWithGoogle())
+            <div class="lego-card p-6">
+                @include('profile.partials.update-password-form')
+            </div>
+        @else
+            <div class="lego-card p-6 text-sm text-[color:var(--muted)]">
+                {{ __('messages.password_google_account') }}
+            </div>
+        @endunless
 
         <div class="lego-card p-6">
             @include('profile.partials.delete-user-form')

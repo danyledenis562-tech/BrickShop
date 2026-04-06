@@ -48,4 +48,23 @@ class PasswordUpdateTest extends TestCase
             ->assertSessionHasErrorsIn('updatePassword', 'current_password')
             ->assertRedirect('/profile');
     }
+
+    public function test_google_user_cannot_update_password(): void
+    {
+        $user = User::factory()->create([
+            'google_id' => 'test-google-subject',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->from(route('profile.edit'))
+            ->put('/password', [
+                'current_password' => 'password',
+                'password' => 'new-password',
+                'password_confirmation' => 'new-password',
+            ]);
+
+        $response->assertSessionHas('toast');
+        $this->assertTrue(Hash::check('password', $user->refresh()->password));
+    }
 }

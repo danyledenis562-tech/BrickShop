@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -22,12 +21,7 @@ class CatalogController extends Controller
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)]);
 
-        if ($search = $request->string('search')->toString()) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('set_number', 'like', "%{$search}%");
-            });
-        }
+        $this->applyProductSearch($query, $request->string('search')->toString());
 
         $categories = Cache::remember('catalog.categories', now()->addMinutes(15), fn () => Category::query()->orderBy('sort_order')->get());
 
@@ -67,30 +61,7 @@ class CatalogController extends Controller
 
         $products = $query->paginate(12);
 
-        $bannerTop = null;
-        if (Schema::hasTable('banners')) {
-            $locale = app()->getLocale();
-
-            $bannerTop = Banner::query()
-                ->where('is_active', true)
-                ->where('position', 'catalog_top')
-                ->where(function ($q) use ($locale) {
-                    $q->whereNull('locale')->orWhere('locale', $locale);
-                })
-                ->where(function ($q) {
-                    $now = now();
-                    $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
-                })
-                ->where(function ($q) {
-                    $now = now();
-                    $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
-                })
-                ->orderBy('sort_order')
-                ->latest()
-                ->first();
-        }
-
-        return view('catalog.index', compact('products', 'categories', 'bannerTop', 'currentCategory'));
+        return view('catalog.index', compact('products', 'categories', 'currentCategory'));
     }
 
     public function suggestions(Request $request): JsonResponse
@@ -102,10 +73,7 @@ class CatalogController extends Controller
 
         $items = Product::query()
             ->where('is_active', true)
-            ->where(function ($q) use ($term) {
-                $q->where('name', 'like', "%{$term}%")
-                    ->orWhere('set_number', 'like', "%{$term}%");
-            })
+            ->tap(fn (Builder $q) => $this->applyProductSearch($q, $term))
             ->with('mainImage')
             ->orderByDesc('popularity')
             ->limit(5)
@@ -129,5 +97,29 @@ class CatalogController extends Controller
             });
 
         return response()->json($items);
+    }
+
+    /**
+     * Case-insensitive partial match on name, series, brand, set number, description (all words must match somewhere).
+     */
+    private function applyProductSearch(Builder $query, string $search): void
+    {
+        $search = trim($search);
+        if ($search === '') {
+            return;
+        }
+
+        $terms = preg_split('/\s+/u', mb_strtolower($search, 'UTF-8'), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        foreach ($terms as $rawTerm) {
+            $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $rawTerm);
+            $pattern = '%'.$escaped.'%';
+            $query->where(function (Builder $q) use ($pattern) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(COALESCE(series, \'\')) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(COALESCE(brand, \'\')) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(COALESCE(set_number, \'\')) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(COALESCE(description, \'\')) LIKE ?', [$pattern]);
+            });
+        }
     }
 }

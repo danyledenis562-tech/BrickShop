@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,6 +22,29 @@ class ProfileTest extends TestCase
             ->get('/profile');
 
         $response->assertOk();
+    }
+
+    public function test_profile_renders_orders_tab_with_enum_status_and_line_items(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['name' => 'Profile Order Item', 'slug' => 'profile-order-item']);
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'status' => 'processing',
+        ]);
+        OrderItem::query()->create([
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'price' => 99.00,
+            'total' => 99.00,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('profile.index', ['tab' => 'orders']))
+            ->assertOk()
+            ->assertSeeText('Profile Order Item')
+            ->assertSeeText(__('messages.order_status_processing'));
     }
 
     public function test_profile_information_can_be_updated(): void

@@ -24,6 +24,23 @@ class CatalogTest extends TestCase
             ->assertSeeText('Unique LEGO Set');
     }
 
+    public function test_catalog_search_matches_partial_case_insensitive(): void
+    {
+        Product::factory()->create([
+            'name' => 'Amazing Technic Crane',
+            'slug' => 'amazing-technic-crane',
+            'is_active' => true,
+        ]);
+
+        $this->get(route('catalog', ['search' => 'technic']))
+            ->assertOk()
+            ->assertSeeText('Amazing Technic Crane');
+
+        $this->get(route('catalog', ['search' => 'CRANE']))
+            ->assertOk()
+            ->assertSeeText('Amazing Technic Crane');
+    }
+
     public function test_product_show_page_loads(): void
     {
         $product = Product::factory()->create(['slug' => 'test-product']);

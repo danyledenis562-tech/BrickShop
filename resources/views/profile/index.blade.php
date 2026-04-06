@@ -87,7 +87,7 @@
                             <div class="font-semibold">
                                 {{ sprintf('#%06d', $order->id) }}
                                 •
-                                {{ __('messages.order_status_'.$order->status) }}
+                                {{ __('messages.order_status_'.$order->status->value) }}
                             </div>
                             <div class="text-sm text-[color:var(--muted)]">{{ $order->created_at->format('d.m.Y') }}</div>
                         </div>

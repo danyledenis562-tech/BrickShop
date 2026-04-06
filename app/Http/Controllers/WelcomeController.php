@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -43,61 +42,6 @@ class WelcomeController extends Controller
             ->take(8)
             ->get());
 
-        $heroBanner = null;
-        $promoBanners = collect();
-        if (Schema::hasTable('banners')) {
-            $locale = app()->getLocale();
-
-            $heroBanner = Cache::remember(
-                "home.hero_banner.{$locale}",
-                now()->addMinutes(5),
-                function () use ($locale) {
-                    return Banner::query()
-                        ->where('is_active', true)
-                        ->where('position', 'home_hero')
-                        ->where(function ($q) use ($locale) {
-                            $q->whereNull('locale')->orWhere('locale', $locale);
-                        })
-                        ->where(function ($q) {
-                            $now = now();
-                            $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
-                        })
-                        ->where(function ($q) {
-                            $now = now();
-                            $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
-                        })
-                        ->orderBy('sort_order')
-                        ->latest()
-                        ->first();
-                }
-            );
-
-            $promoBanners = Cache::remember(
-                "home.promo_banners.{$locale}",
-                now()->addMinutes(5),
-                function () use ($locale) {
-                    return Banner::query()
-                        ->where('is_active', true)
-                        ->where('position', 'home_middle')
-                        ->where(function ($q) use ($locale) {
-                            $q->whereNull('locale')->orWhere('locale', $locale);
-                        })
-                        ->where(function ($q) {
-                            $now = now();
-                            $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
-                        })
-                        ->where(function ($q) {
-                            $now = now();
-                            $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now);
-                        })
-                        ->orderBy('sort_order')
-                        ->latest()
-                        ->take(3)
-                        ->get();
-                }
-            );
-        }
-
         $categories = Cache::remember('home.categories', now()->addMinutes(15), fn () => Category::query()
             ->withCount('products')
             ->orderBy('sort_order')
@@ -130,6 +74,6 @@ class WelcomeController extends Controller
             }
         }
 
-        return view('welcome', compact('featured', 'newArrivals', 'hits', 'categories', 'heroBanner', 'promoBanners', 'recentlyViewed'));
+        return view('welcome', compact('featured', 'newArrivals', 'hits', 'categories', 'recentlyViewed'));
     }
 }

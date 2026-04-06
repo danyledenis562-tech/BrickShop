@@ -25,7 +25,9 @@ return [
     ],
 
     'nova_poshta' => [
-        'api_key' => env('NOVA_POSHTA_API_KEY'),
+        // Також підтримується NOVAPOSHTA_API_KEY (якщо в Render скопійовано з іншого шаблону)
+        'api_key' => env('NOVA_POSHTA_API_KEY', env('NOVAPOSHTA_API_KEY')),
+        'endpoint' => env('NOVA_POSHTA_API_URL', 'https://api.novaposhta.ua/v2.0/json/'),
     ],
 
 ];

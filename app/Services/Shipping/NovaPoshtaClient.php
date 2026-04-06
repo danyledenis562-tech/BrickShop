@@ -2,8 +2,10 @@
 
 namespace App\Services\Shipping;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 final class NovaPoshtaClient
 {
@@ -13,12 +15,14 @@ final class NovaPoshtaClient
 
     private function apiKey(): string
     {
-        return (string) config('services.nova_poshta.api_key', '');
+        $key = config('services.nova_poshta.api_key');
+
+        return is_string($key) ? trim($key) : '';
     }
 
     private function endpoint(): string
     {
-        return 'https://api.novaposhta.ua/v2.0/json/';
+        return rtrim((string) config('services.nova_poshta.endpoint', 'https://api.novaposhta.ua/v2.0/json/'), '/').'/';
     }
 
     /**
@@ -52,7 +56,13 @@ final class NovaPoshtaClient
                 ]);
 
             if (! $response->ok()) {
-                return [];
+                Log::warning('Nova Poshta HTTP error (cities)', ['status' => $response->status()]);
+
+                return $this->fallbackCities($query);
+            }
+
+            if (! $this->npResponseSucceeded($response)) {
+                return $this->fallbackCities($query);
             }
 
             return collect($response->json('data.0.Addresses', []))
@@ -69,7 +79,7 @@ final class NovaPoshtaClient
     }
 
     /**
-     * @return array<int, array{label:string}>
+     * @return array<int, array{label:string, ref:string, name:string, address:string}>
      */
     public function branches(string $cityRef): array
     {
@@ -94,17 +104,30 @@ final class NovaPoshtaClient
                     'calledMethod' => 'getWarehouses',
                     'methodProperties' => [
                         'CityRef' => $cityRef,
-                        'Limit' => 100,
+                        'Limit' => 500,
                         'Language' => 'UA',
                     ],
                 ]);
 
-            if (! $response->ok()) {
-                return [];
+            if (! $response->ok() || ! $this->npResponseSucceeded($response)) {
+                return $this->fallbackBranches($cityRef);
             }
 
             return collect($response->json('data', []))
-                ->map(fn (array $row) => ['label' => trim((string) ($row['Description'] ?? ''))])
+                ->map(function (array $row) {
+                    $description = trim((string) ($row['Description'] ?? ''));
+                    $ref = (string) ($row['Ref'] ?? '');
+                    $number = trim((string) ($row['Number'] ?? ''));
+                    $short = trim((string) ($row['ShortAddress'] ?? ''));
+                    $address = $short !== '' ? $short : ($number !== '' ? '№'.$number : '');
+
+                    return [
+                        'ref' => $ref,
+                        'label' => $description,
+                        'name' => $description,
+                        'address' => $address,
+                    ];
+                })
                 ->filter(fn (array $row) => $row['label'] !== '')
                 ->values()
                 ->all();
@@ -143,7 +166,7 @@ final class NovaPoshtaClient
                     ],
                 ]);
 
-            if (! $response->ok()) {
+            if (! $response->ok() || ! $this->npResponseSucceeded($response)) {
                 return [];
             }
 
@@ -155,6 +178,27 @@ final class NovaPoshtaClient
         });
     }
 
+    private function npResponseSucceeded(Response $response): bool
+    {
+        $json = $response->json();
+        if (! is_array($json)) {
+            return false;
+        }
+        if (($json['success'] ?? false) === true) {
+            return true;
+        }
+
+        Log::warning('Nova Poshta API returned success=false', [
+            'errors' => $json['errors'] ?? null,
+            'warnings' => $json['warnings'] ?? null,
+        ]);
+
+        return false;
+    }
+
+    /**
+     * @return array<int, array{label:string, ref:string, district:string, area:string}>
+     */
     private function fallbackCities(string $query): array
     {
         return collect($this->fallback->directory())
@@ -169,6 +213,9 @@ final class NovaPoshtaClient
             ->all();
     }
 
+    /**
+     * @return array<int, array{label:string, ref:string, name:string, address:string}>
+     */
     private function fallbackBranches(string $cityRef): array
     {
         $row = $this->fallback->directory()[$cityRef] ?? null;
@@ -177,8 +224,13 @@ final class NovaPoshtaClient
         }
 
         return collect($row['branches'])
-            ->map(fn (string $label) => ['label' => $label])
             ->values()
+            ->map(fn (string $label, int $idx) => [
+                'ref' => $cityRef.'-'.$idx,
+                'label' => $label,
+                'name' => $label,
+                'address' => '',
+            ])
             ->all();
     }
 }

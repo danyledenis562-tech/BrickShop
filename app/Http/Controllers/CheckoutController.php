@@ -78,10 +78,16 @@ class CheckoutController extends Controller
 
         $cartService->clear($request);
 
-        $order->load('items.product');
-
-        $email = $order->guest_email ?? $order->user?->email;
-        if ($email) {
+        $orderId = $order->id;
+        dispatch(function () use ($orderId): void {
+            $order = Order::query()->with('items.product')->find($orderId);
+            if (! $order) {
+                return;
+            }
+            $email = $order->guest_email ?? $order->user?->email;
+            if (! $email) {
+                return;
+            }
             try {
                 Mail::to($email)->send(new OrderPlacedMail($order));
             } catch (Throwable $e) {
@@ -91,7 +97,7 @@ class CheckoutController extends Controller
                     'message' => $e->getMessage(),
                 ]);
             }
-        }
+        })->afterResponse();
 
         if (($data['payment_type'] ?? '') === 'liqpay' && $liqPay->isConfigured()) {
             return view('checkout.liqpay-redirect', [

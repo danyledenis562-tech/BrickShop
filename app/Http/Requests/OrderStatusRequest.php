@@ -16,7 +16,6 @@ class OrderStatusRequest extends FormRequest
         return [
             'status' => ['required', 'in:new,paid,processing,shipped,canceled'],
             'tracking_number' => ['nullable', 'string', 'max:120'],
-            'tracking_url' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

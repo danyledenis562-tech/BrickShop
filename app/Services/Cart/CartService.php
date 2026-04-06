@@ -92,7 +92,9 @@ final class CartService
     {
         $request->session()->forget(self::SESSION_KEY);
         if ($uid = $request->user()?->id) {
-            App::make(CartReminderService::class)->clearForUserId($uid);
+            dispatch(function () use ($uid): void {
+                App::make(CartReminderService::class)->clearForUserId($uid);
+            })->afterResponse();
         }
     }
 

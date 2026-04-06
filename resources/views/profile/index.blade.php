@@ -100,11 +100,7 @@
                         @if ($order->tracking_number)
                             <div class="mt-2 text-sm text-[color:var(--muted)]">
                                 {{ __('messages.tracking_number') }}:
-                                @if ($order->tracking_url)
-                                    <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener" class="font-mono font-semibold text-[color:var(--lego-blue)]">{{ $order->tracking_number }}</a>
-                                @else
-                                    <span class="font-mono font-semibold">{{ $order->tracking_number }}</span>
-                                @endif
+                                <span class="font-mono font-semibold">{{ $order->tracking_number }}</span>
                             </div>
                         @endif
                         @if (in_array($order->status->value, ['new', 'paid', 'processing'], true))

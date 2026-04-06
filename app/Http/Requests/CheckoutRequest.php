@@ -12,6 +12,13 @@ class CheckoutRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'dont_call' => $this->boolean('dont_call'),
+        ]);
+    }
+
     public function rules(): array
     {
         $paymentTypes = ['card', 'cash'];
@@ -32,6 +39,7 @@ class CheckoutRequest extends FormRequest
             'delivery_type' => ['required', 'in:nova,courier,ukrposhta'],
             'payment_type' => ['required', Rule::in($paymentTypes)],
             'note' => ['nullable', 'string', 'max:500'],
+            'dont_call' => ['boolean'],
             'promo_code' => ['nullable', 'string', 'max:50'],
             'bonus_to_spend' => ['nullable', 'integer', 'min:0'],
             'card_number' => ['nullable', 'string', 'max:25'],

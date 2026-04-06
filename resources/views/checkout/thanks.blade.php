@@ -26,11 +26,8 @@
             @if ($order->tracking_number)
                 <div class="mt-4 rounded-xl border border-[color:var(--border)] p-4 text-sm">
                     <div class="font-semibold">{{ __('messages.tracking_title') }}</div>
-                    @if ($order->tracking_url)
-                        <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener" class="mt-2 inline-block font-mono text-[color:var(--lego-blue)] hover:underline">{{ $order->tracking_number }}</a>
-                    @else
-                        <div class="mt-2 font-mono">{{ $order->tracking_number }}</div>
-                    @endif
+                    <p class="mt-2 text-[color:var(--muted)]">{{ __('messages.tracking_thanks_hint') }}</p>
+                    <div class="mt-2 font-mono text-lg font-semibold">{{ $order->tracking_number }}</div>
                 </div>
             @endif
             <a href="{{ route('catalog') }}" class="mt-4 inline-block lego-btn lego-btn-primary">{{ __('messages.back_to_catalog') }}</a>

@@ -27,6 +27,7 @@ class Order extends Model
         'delivery_type',
         'payment_type',
         'note',
+        'dont_call',
         'tracking_number',
         'tracking_url',
         'canceled_at',
@@ -37,6 +38,7 @@ class Order extends Model
         'total' => 'decimal:2',
         'discount_amount' => 'decimal:2',
         'shipping_amount' => 'decimal:2',
+        'dont_call' => 'boolean',
         'canceled_at' => 'datetime',
     ];
 
@@ -58,5 +60,20 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function deliveryTypeLabel(): string
+    {
+        return match ($this->delivery_type) {
+            'nova' => __('messages.delivery_nova'),
+            'courier' => __('messages.delivery_courier_nova'),
+            'ukrposhta' => __('messages.delivery_ukrposhta'),
+            default => (string) $this->delivery_type,
+        };
+    }
+
+    public function customerEmail(): ?string
+    {
+        return $this->guest_email ?: $this->user?->email;
     }
 }

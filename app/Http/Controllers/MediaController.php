@@ -10,6 +10,9 @@ class MediaController extends Controller
     public function publicStorage(string $path): BinaryFileResponse
     {
         $path = trim(str_replace('\\', '/', $path), '/');
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, strlen('storage/'));
+        }
         abort_if($path === '' || str_contains($path, '..'), 404);
 
         $disk = Storage::disk('public');

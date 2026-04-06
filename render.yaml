@@ -28,6 +28,10 @@ services:
         value: "false"
       - key: LOG_CHANNEL
         value: stderr
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_TIMEOUT
+        value: "3"
       - key: DB_CONNECTION
         value: pgsql
       - key: DATABASE_URL

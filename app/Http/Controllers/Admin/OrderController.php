@@ -16,6 +16,18 @@ use Throwable;
 
 class OrderController extends Controller
 {
+    private function canSendMailNow(): bool
+    {
+        $default = (string) config('mail.default', 'smtp');
+        if ($default !== 'smtp') {
+            return true;
+        }
+
+        return filled(config('mail.mailers.smtp.username'))
+            && filled(config('mail.mailers.smtp.password'))
+            && filled(config('mail.mailers.smtp.host'));
+    }
+
     public function index(): View
     {
         $orders = Order::query()
@@ -55,7 +67,7 @@ class OrderController extends Controller
         $order->tracking_url = null;
         $order->save();
 
-        if ($newTtn !== null && $newTtn !== $oldTtn) {
+        if ($newTtn !== null && $newTtn !== $oldTtn && $this->canSendMailNow()) {
             $orderId = $order->id;
             dispatch(function () use ($orderId): void {
                 $fresh = Order::query()->find($orderId);

@@ -19,6 +19,18 @@ use Throwable;
 
 class CheckoutController extends Controller
 {
+    private function canSendMailNow(): bool
+    {
+        $default = (string) config('mail.default', 'smtp');
+        if ($default !== 'smtp') {
+            return true;
+        }
+
+        return filled(config('mail.mailers.smtp.username'))
+            && filled(config('mail.mailers.smtp.password'))
+            && filled(config('mail.mailers.smtp.host'));
+    }
+
     public function index(Request $request, CheckoutPricingService $pricing, CartService $cartService): View|RedirectResponse
     {
         $lines = $cartService->getLines($request);
@@ -78,26 +90,28 @@ class CheckoutController extends Controller
 
         $cartService->clear($request);
 
-        $orderId = $order->id;
-        dispatch(function () use ($orderId): void {
-            $order = Order::query()->with('items.product')->find($orderId);
-            if (! $order) {
-                return;
-            }
-            $email = $order->guest_email ?? $order->user?->email;
-            if (! $email) {
-                return;
-            }
-            try {
-                Mail::to($email)->send(new OrderPlacedMail($order));
-            } catch (Throwable $e) {
-                Log::warning('Order confirmation email failed', [
-                    'order_id' => $order->id,
-                    'email' => $email,
-                    'message' => $e->getMessage(),
-                ]);
-            }
-        })->afterResponse();
+        if ($this->canSendMailNow()) {
+            $orderId = $order->id;
+            dispatch(function () use ($orderId): void {
+                $order = Order::query()->with('items.product')->find($orderId);
+                if (! $order) {
+                    return;
+                }
+                $email = $order->guest_email ?? $order->user?->email;
+                if (! $email) {
+                    return;
+                }
+                try {
+                    Mail::to($email)->send(new OrderPlacedMail($order));
+                } catch (Throwable $e) {
+                    Log::warning('Order confirmation email failed', [
+                        'order_id' => $order->id,
+                        'email' => $email,
+                        'message' => $e->getMessage(),
+                    ]);
+                }
+            })->afterResponse();
+        }
 
         if (($data['payment_type'] ?? '') === 'liqpay' && $liqPay->isConfigured()) {
             return view('checkout.liqpay-redirect', [

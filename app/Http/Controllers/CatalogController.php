@@ -123,11 +123,15 @@ class CatalogController extends Controller
         if (! $path) {
             return null;
         }
+        $normalizedPath = ltrim($path, '/');
+        if (Str::startsWith($normalizedPath, 'storage/')) {
+            $normalizedPath = Str::after($normalizedPath, 'storage/');
+        }
 
         return match (true) {
             Str::startsWith($path, ['http://', 'https://']) => $path,
             Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
-            default => route('media.public', ['path' => ltrim($path, '/')]),
+            default => route('media.public', ['path' => $normalizedPath]),
         };
     }
 }

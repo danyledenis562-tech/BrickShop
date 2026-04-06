@@ -7,7 +7,13 @@ return [
     | - SHOP_LOGO_PATH — файл у public/, напр. images/brickshop-logo.png
     */
     'logo_url' => env('SHOP_LOGO_URL'),
-    'logo_path' => env('SHOP_LOGO_PATH', 'images/brickshop-logo.png'),
+    // SVG у репо — завжди є на Render після deploy; PNG/JPG можна задати через SHOP_LOGO_PATH
+    'logo_path' => env('SHOP_LOGO_PATH', 'images/brickshop-logo.svg'),
+    /** Короткий текст поруч із маркою / якщо немає картинки */
+    'logo_text' => env('SHOP_LOGO_TEXT', 'Brick Shop'),
+
+    /** true — при повному логотипі (PNG з текстом) приховати підпис поруч */
+    'logo_hide_wordmark' => filter_var(env('SHOP_LOGO_HIDE_WORDMARK', false), FILTER_VALIDATE_BOOLEAN),
 
     'test_payment_webhook_secret' => env('SHOP_TEST_PAYMENT_WEBHOOK_SECRET', ''),
     'low_stock_threshold' => (int) env('SHOP_LOW_STOCK_THRESHOLD', 5),

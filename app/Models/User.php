@@ -118,4 +118,9 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function registeredWithGoogle(): bool
+    {
+        return filled($this->google_id);
+    }
 }

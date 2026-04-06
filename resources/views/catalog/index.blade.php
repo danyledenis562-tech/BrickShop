@@ -16,8 +16,8 @@
             <h1 class="text-4xl font-extrabold">{{ __('messages.catalog') }}</h1>
             <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.catalog_subtitle') }}</p>
 
-            <form method="GET" class="mt-6 grid gap-4 md:grid-cols-6">
-                <input name="search" value="{{ request('search') }}" placeholder="{{ __('messages.search_placeholder_catalog') }}" class="lego-input md:col-span-2">
+            <form method="GET" action="{{ route('catalog') }}" class="mt-6 grid gap-4 md:grid-cols-6" data-catalog-autofilter>
+                <input name="search" value="{{ request('search') }}" placeholder="{{ __('messages.search_placeholder_catalog') }}" class="lego-input md:col-span-2" autocomplete="off">
                 <select name="category" class="lego-input">
                     <option value="">{{ __('messages.all_categories') }}</option>
                     @foreach ($categories as $category)
@@ -39,40 +39,13 @@
                     <option value="price_asc" @selected(request('sort') === 'price_asc')>{{ __('messages.sort_price_asc') }}</option>
                     <option value="price_desc" @selected(request('sort') === 'price_desc')>{{ __('messages.sort_price_desc') }}</option>
                 </select>
-                <label class="flex items-center gap-2 text-sm">
+                <label class="flex items-center gap-2 text-sm md:col-span-2">
                     <input type="checkbox" name="in_stock" value="1" @checked(request('in_stock'))>
                     {{ __('messages.in_stock') }}
                 </label>
-                <button class="lego-btn lego-btn-primary md:col-span-2">{{ __('messages.apply') }}</button>
+                <button type="submit" class="sr-only">{{ __('messages.apply') }}</button>
             </form>
         </section>
-
-        @if ($bannerTop)
-            @php
-                $bannerImage = $bannerTop->image
-                    ? (\Illuminate\Support\Str::startsWith($bannerTop->image, ['http://', 'https://'])
-                        ? $bannerTop->image
-                        : asset('storage/'.$bannerTop->image))
-                    : null;
-            @endphp
-            <section class="mt-10">
-                <a href="{{ $bannerTop->link_url }}" class="lego-poster lego-pattern block">
-                    <div class="relative z-10 grid gap-6 md:grid-cols-[1.2fr,0.8fr] md:items-center">
-                        <div>
-                            <p class="text-xs uppercase tracking-widest text-white/80">{{ __('messages.catalog_highlight') }}</p>
-                            <h2 class="mt-2 text-3xl font-extrabold">{{ $bannerTop->title }}</h2>
-                            <p class="mt-2 text-sm text-white/90">{{ $bannerTop->subtitle }}</p>
-                            <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
-                        </div>
-                        @if ($bannerImage)
-                            <div class="lego-poster-image p-3">
-                                <img src="{{ $bannerImage }}" alt="{{ $bannerTop->title }}" class="h-44 w-full rounded-2xl object-cover">
-                            </div>
-                        @endif
-                    </div>
-                </a>
-            </section>
-        @endif
 
         <section class="lego-section">
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

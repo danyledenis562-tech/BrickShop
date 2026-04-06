@@ -2,14 +2,6 @@
 <x-app-layout>
     <div class="mx-auto max-w-7xl px-4 py-12">
         @php
-            $fallbackHeroImage = 'https://images.unsplash.com/photo-1506224774223-6f147960c8c9?auto=format&fit=crop&w=900&q=80';
-            $heroImage = $heroBanner?->image
-                ? (\Illuminate\Support\Str::startsWith($heroBanner->image, ['http://', 'https://'])
-                    ? $heroBanner->image
-                    : asset('storage/'.$heroBanner->image))
-                : ($featured->first()?->mainImage?->path
-                    ? asset('storage/'.$featured->first()->mainImage->path)
-                    : $fallbackHeroImage);
             $weeklyBannerImage = 'https://www.lego.com/cdn/cs/set/assets/blt519dac201a3dd4c1/42172.png?fit=bounds&format=png&width=1200&height=900&dpr=1';
             $promoVisuals = [
                 'lego-technic' => [
@@ -36,7 +28,6 @@
                 'lego-creator' => asset('images/categories/real/lego-creator.png'),
                 'lego-ninjago' => asset('images/categories/real/lego-ninjago.png'),
             ];
-            $promoCategories = ['lego-technic', 'lego-star-wars', 'lego-city'];
         @endphp
 
         <section class="lego-hero lego-pattern rounded-[32px] p-8 md:p-12 shadow-xl" data-animate>
@@ -74,54 +65,30 @@
                 <a href="{{ route('catalog') }}" class="text-sm font-semibold text-[color:var(--lego-blue)]">{{ __('messages.view_all') }}</a>
             </div>
             <div class="mt-6 grid gap-4 md:grid-cols-3">
-                @forelse ($promoBanners as $banner)
-                    @php
-                        $promoCategory = $promoCategories[$loop->index % count($promoCategories)];
-                        $bannerImage = $banner->image
-                            ? (\Illuminate\Support\Str::startsWith($banner->image, ['http://', 'https://'])
-                                ? $banner->image
-                                : asset('storage/'.$banner->image))
-                            : null;
-                        $promoVisual = $promoVisuals[$promoCategory] ?? null;
-                        $posterImage = $bannerImage ?: ($promoVisual['image'] ?? null);
-                        $posterGradient = $promoVisual['gradient'] ?? 'linear-gradient(135deg, #0f172a 0%, #111827 55%, #0b1326 100%)';
-                        $posterGlow = $promoVisual['glow'] ?? 'rgba(255, 255, 255, 0.2)';
-                        $posterLink = $banner->link_url ?: route('catalog', ['category' => $promoCategory]);
-                    @endphp
-                    <a href="{{ $posterLink }}" class="lego-poster block" style="--poster-image: url('{{ $posterImage }}'); --poster-glow: {{ $posterGlow }}; --poster-gradient: {{ $posterGradient }};">
-                        <div class="lego-poster-content">
-                            <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.featured_collections') }}</div>
-                            <div class="mt-2 text-2xl font-extrabold">{{ $banner->title }}</div>
-                            <p class="mt-2 text-sm text-white/90">{{ $banner->subtitle }}</p>
-                            <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
-                        </div>
-                    </a>
-                @empty
-                    <a href="{{ route('catalog', ['category' => 'lego-technic']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-technic']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-technic']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-technic']['gradient'] }};">
-                        <div class="lego-poster-content">
-                            <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.lego_technic_label') }}</div>
-                            <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_technic') }}</div>
-                            <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_technic_desc') }}</p>
-                            <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
-                        </div>
-                    </a>
-                    <a href="{{ route('catalog', ['category' => 'lego-star-wars']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-star-wars']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-star-wars']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-star-wars']['gradient'] }};">
-                        <div class="lego-poster-content">
-                            <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.star_wars_label') }}</div>
-                            <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_starwars') }}</div>
-                            <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_starwars_desc') }}</p>
-                            <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
-                        </div>
-                    </a>
-                    <a href="{{ route('catalog', ['category' => 'lego-city']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-city']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-city']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-city']['gradient'] }};">
-                        <div class="lego-poster-content">
-                            <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.lego_city_label') }}</div>
-                            <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_new') }}</div>
-                            <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_new_desc') }}</p>
-                            <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
-                        </div>
-                    </a>
-                @endforelse
+                <a href="{{ route('catalog', ['category' => 'lego-technic']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-technic']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-technic']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-technic']['gradient'] }};">
+                    <div class="lego-poster-content">
+                        <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.lego_technic_label') }}</div>
+                        <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_technic') }}</div>
+                        <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_technic_desc') }}</p>
+                        <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
+                    </div>
+                </a>
+                <a href="{{ route('catalog', ['category' => 'lego-star-wars']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-star-wars']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-star-wars']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-star-wars']['gradient'] }};">
+                    <div class="lego-poster-content">
+                        <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.star_wars_label') }}</div>
+                        <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_starwars') }}</div>
+                        <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_starwars_desc') }}</p>
+                        <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
+                    </div>
+                </a>
+                <a href="{{ route('catalog', ['category' => 'lego-city']) }}" class="lego-poster block" style="--poster-image: url('{{ $promoVisuals['lego-city']['image'] }}'); --poster-glow: {{ $promoVisuals['lego-city']['glow'] }}; --poster-gradient: {{ $promoVisuals['lego-city']['gradient'] }};">
+                    <div class="lego-poster-content">
+                        <div class="text-xs uppercase tracking-widest text-white/70">{{ __('messages.lego_city_label') }}</div>
+                        <div class="mt-2 text-2xl font-extrabold">{{ __('messages.promo_new') }}</div>
+                        <p class="mt-2 text-sm text-white/90">{{ __('messages.promo_new_desc') }}</p>
+                        <span class="mt-4 inline-flex lego-btn lego-btn-secondary text-xs">{{ __('messages.shop_now') }}</span>
+                    </div>
+                </a>
             </div>
         </section>
 

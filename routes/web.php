@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -78,7 +77,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('products', AdminProductController::class);
     Route::resource('categories', AdminCategoryController::class);
-    Route::resource('banners', AdminBannerController::class)->except(['show']);
     Route::resource('promo-codes', AdminPromoCodeController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->only(['index', 'edit', 'update']);
     Route::get('orders/export', [AdminOrderController::class, 'export'])->name('orders.export');

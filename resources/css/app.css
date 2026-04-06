@@ -263,12 +263,13 @@
     }
 
     .lego-logo {
-        @apply inline-flex items-center gap-3 text-2xl font-extrabold;
+        @apply inline-flex shrink-0 items-center gap-3 text-2xl font-extrabold;
         color: var(--text);
         background: color-mix(in srgb, var(--card) 88%, transparent);
         padding: 0.55rem 0.9rem;
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-soft);
+        min-width: fit-content;
     }
 
     .lego-logo-mark {
@@ -279,10 +280,29 @@
     }
 
     .lego-logo-img {
-        height: 56px;
+        height: 44px;
         width: auto;
+        max-width: min(220px, 42vw);
         display: block;
+        object-fit: contain;
         filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+    }
+
+    .lego-logo-img--mark {
+        height: 36px;
+        width: 52px;
+        max-width: none;
+    }
+
+    .lego-logo-wordmark {
+        @apply font-extrabold tracking-tight;
+        font-size: 1.35rem;
+        line-height: 1.1;
+        white-space: nowrap;
+    }
+
+    [data-theme="dark"] .lego-logo-img {
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
     }
 
 
@@ -1539,6 +1559,16 @@
         color: var(--lego-yellow);
         text-decoration: none;
         text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .lego-auth-logo-row {
+        flex-wrap: wrap;
+        gap: 0.5rem 0.65rem;
+    }
+
+    .lego-auth-logo-text {
+        font-size: 1.5rem;
         letter-spacing: 0.04em;
     }
 

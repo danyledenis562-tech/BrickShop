@@ -8,6 +8,7 @@
                 <tr>
                     <th>{{ __('messages.name') }}</th>
                     <th>{{ __('messages.email') }}</th>
+                    <th>{{ __('messages.user_auth_method') }}</th>
                     <th>{{ __('messages.role') }}</th>
                     <th></th>
                 </tr>
@@ -17,6 +18,13 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>
+                            @if ($user->registeredWithGoogle())
+                                <span class="admin-badge badge-paid">{{ __('messages.user_auth_google') }}</span>
+                            @else
+                                <span class="admin-badge badge-processing">{{ __('messages.user_auth_site') }}</span>
+                            @endif
+                        </td>
                         <td>{{ $user->role }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.users.edit', $user) }}" class="admin-icon-btn" aria-label="{{ __('messages.edit') }}">

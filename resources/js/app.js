@@ -12,6 +12,7 @@ import { initBackButtons } from './ui/backButton';
 import { initAnimateOnIntersect } from './ui/animateOnIntersect';
 import { initProductGallery } from './ui/productGallery';
 import { initProductMagnifier } from './ui/productMagnifier';
+import { initCatalogAutoFilter } from './ui/catalogAutoFilter';
 
 window.Alpine = Alpine;
 
@@ -28,4 +29,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimateOnIntersect();
     initProductGallery();
     initProductMagnifier();
+    initCatalogAutoFilter();
 });

@@ -37,7 +37,13 @@
         @endif
 
         <div class="lego-brick lego-product-photo {{ $imageHeight }}">
-            <x-product-image :path="$product->mainImage?->path" :alt="$product->name" class="h-full w-full object-cover" />
+            <x-product-image
+                :path="$product->mainImage?->path"
+                :image-id="$product->mainImage?->id"
+                :embedded="$product->mainImage?->hasEmbeddedData() ?? false"
+                :alt="$product->name"
+                class="h-full w-full object-cover"
+            />
             @if ($showActions)
                 <div class="lego-card-actions z-20">
                     @if ($product->stock > 0)

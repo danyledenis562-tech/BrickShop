@@ -1,12 +1,16 @@
 @props([
     'path' => null,
+    'imageId' => null,
+    'embedded' => false,
     'alt' => '',
     'class' => '',
 ])
 
 @php
     $url = null;
-    if ($path) {
+    if ($embedded && $imageId) {
+        $url = route('media.product-image', ['image' => $imageId]);
+    } elseif ($path) {
         $normalizedPath = ltrim($path, '/');
         if (\Illuminate\Support\Str::startsWith($normalizedPath, 'storage/')) {
             $normalizedPath = \Illuminate\Support\Str::after($normalizedPath, 'storage/');

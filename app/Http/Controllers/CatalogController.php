@@ -79,8 +79,13 @@ class CatalogController extends Controller
             ->limit(5)
             ->get()
             ->map(function (Product $product) {
-                $path = $product->mainImage?->path;
-                $image = $this->mediaUrl($path);
+                $mainImage = $product->mainImage;
+                $image = null;
+                if ($mainImage?->hasEmbeddedData()) {
+                    $image = route('media.product-image', ['image' => $mainImage->id]);
+                } else {
+                    $image = $this->mediaUrl($mainImage?->path);
+                }
 
                 return [
                     'name' => $product->name,

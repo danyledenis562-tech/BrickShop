@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends Controller
 {
@@ -21,6 +23,27 @@ class MediaController extends Controller
         }
 
         return response()->file(Storage::path('public/'.$path), [
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
+    public function productImage(ProductImage $image): Response
+    {
+        abort_unless($image->hasEmbeddedData(), 404);
+
+        $raw = (string) $image->image_data;
+        if (! preg_match('#^data:(image/[a-zA-Z0-9.+-]+);base64,(.+)$#', $raw, $matches)) {
+            abort(404);
+        }
+
+        $mime = $matches[1];
+        $payload = base64_decode($matches[2], true);
+        if ($payload === false) {
+            abort(404);
+        }
+
+        return response($payload, 200, [
+            'Content-Type' => $mime,
             'Cache-Control' => 'public, max-age=31536000, immutable',
         ]);
     }

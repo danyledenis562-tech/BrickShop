@@ -48,6 +48,22 @@
 - `EMBED_IMAGES_IN_DB_ON_START=true`
 - `EMBED_IMAGES_IN_DB_FORCE=true` (опційно)
 
+### Варіант через Cloudinary (рекомендовано для продакшн)
+Команда завантажує фото товарів у Cloudinary і оновлює `product_images.path` на `secure_url`:
+
+- `php artisan shop:sync-product-images-to-cloudinary`
+- `php artisan shop:sync-product-images-to-cloudinary --force`
+
+Потрібні змінні:
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+- `CLOUDINARY_FOLDER=brickshop/products` (опційно)
+
+Автозапуск у `start.sh`:
+- `CLOUDINARY_SYNC_ON_START=true`
+- `CLOUDINARY_SYNC_FORCE=true` (опційно)
+
 ## Деплой (production)
 Після `composer install --no-dev` та міграцій виконай кеш для прискорення:
 - `php artisan config:cache`

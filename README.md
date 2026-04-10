@@ -38,6 +38,16 @@
 
 Після успішного запуску поверни `MIRROR_IMAGES_ON_START=false`, щоб команда не запускалась на кожен деплой.
 
+### Варіант "зберігати фото прямо в БД"
+Додано окрему команду, яка завантажує фото та записує їх у `product_images.image_data`:
+
+- `php artisan shop:embed-product-images-in-db`
+- `php artisan shop:embed-product-images-in-db --force`
+
+Автозапуск під час деплою:
+- `EMBED_IMAGES_IN_DB_ON_START=true`
+- `EMBED_IMAGES_IN_DB_FORCE=true` (опційно)
+
 ## Деплой (production)
 Після `composer install --no-dev` та міграцій виконай кеш для прискорення:
 - `php artisan config:cache`

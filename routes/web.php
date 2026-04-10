@@ -41,6 +41,8 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
 Route::get('/media/public/{path}', [MediaController::class, 'publicStorage'])
     ->where('path', '.*')
     ->name('media.public');
+Route::get('/media/product-image/{image}', [MediaController::class, 'productImage'])
+    ->name('media.product-image');
 
 Route::get('/shipping/nova/cities', [ShippingController::class, 'novaCities'])->name('shipping.nova.cities');
 Route::get('/shipping/nova/branches', [ShippingController::class, 'novaBranches'])->name('shipping.nova.branches');

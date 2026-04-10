@@ -13,8 +13,15 @@
     if ($galleryRows->isEmpty() && $product->mainImage) {
         $galleryRows = collect([$product->mainImage]);
     }
-    $galleryUrl = function (?string $path): ?string {
-        if (! $path) {
+    $galleryUrl = function ($image): ?string {
+        if (! $image) {
+            return null;
+        }
+        if (method_exists($image, 'hasEmbeddedData') && $image->hasEmbeddedData()) {
+            return route('media.product-image', ['image' => $image->id]);
+        }
+        $path = (string) ($image->path ?? '');
+        if ($path === '') {
             return null;
         }
         $normalizedPath = ltrim($path, '/');
@@ -28,8 +35,8 @@
             default => route('media.public', ['path' => $normalizedPath]),
         };
     };
-    $firstUrl = $galleryUrl($galleryRows->first()?->path);
-    $schemaImageUrls = $galleryRows->map(fn ($img) => $galleryUrl($img->path))->filter()->values()->all();
+    $firstUrl = $galleryUrl($galleryRows->first());
+    $schemaImageUrls = $galleryRows->map(fn ($img) => $galleryUrl($img))->filter()->values()->all();
     $metaDesc = \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 160, '…');
     $schemaProduct = [
         '@context' => 'https://schema.org',

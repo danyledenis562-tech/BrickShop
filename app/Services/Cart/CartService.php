@@ -143,7 +143,9 @@ final class CartService
                 'slug' => (string) $product->slug,
                 'price' => (float) $product->price,
                 'quantity' => $qty,
-                'image' => $product->mainImage?->path,
+                'image' => $product->mainImage?->hasEmbeddedData()
+                    ? route('media.product-image', ['image' => $product->mainImage->id])
+                    : $product->mainImage?->path,
                 'product' => $product,
             ];
         }

@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 
 final class CartService
 {
@@ -143,9 +144,11 @@ final class CartService
                 'slug' => (string) $product->slug,
                 'price' => (float) $product->price,
                 'quantity' => $qty,
-                'image' => $product->mainImage?->hasEmbeddedData()
+                'image' => Str::startsWith((string) ($product->mainImage?->path ?? ''), ['http://', 'https://'])
+                    ? $product->mainImage?->path
+                    : ($product->mainImage?->hasEmbeddedData()
                     ? route('media.product-image', ['image' => $product->mainImage->id])
-                    : $product->mainImage?->path,
+                    : $product->mainImage?->path),
                 'product' => $product,
             ];
         }

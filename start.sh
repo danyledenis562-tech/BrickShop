@@ -8,6 +8,13 @@ if [ -f artisan ]; then
   if [ "${SEED_ON_START:-false}" = "true" ]; then
     php artisan db:seed --force || true
   fi
+  if [ "${MIRROR_IMAGES_ON_START:-false}" = "true" ]; then
+    if [ "${MIRROR_IMAGES_FORCE:-false}" = "true" ]; then
+      php artisan shop:mirror-product-images --force --no-interaction || true
+    else
+      php artisan shop:mirror-product-images --no-interaction || true
+    fi
+  fi
   php artisan optimize || true
 fi
 

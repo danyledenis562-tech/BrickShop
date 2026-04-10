@@ -71,8 +71,14 @@ class SyncProductImagesToCloudinary extends Command
             }
 
             $timestamp = time();
-            $publicId = ($folder !== '' ? $folder.'/' : '').$image->id;
-            $signature = sha1("folder={$folder}&public_id={$publicId}&timestamp={$timestamp}{$apiSecret}");
+            $publicId = (string) $image->id;
+            $signaturePayload = [
+                'folder' => $folder,
+                'public_id' => $publicId,
+                'timestamp' => (string) $timestamp,
+            ];
+            ksort($signaturePayload);
+            $signature = sha1(urldecode(http_build_query($signaturePayload)).$apiSecret);
 
             $response = $this->cloudinaryClient()
                 ->attach('file', $bytes, $filename)
@@ -80,7 +86,7 @@ class SyncProductImagesToCloudinary extends Command
                     'api_key' => $apiKey,
                     'timestamp' => $timestamp,
                     'folder' => $folder,
-                    'public_id' => (string) $image->id,
+                    'public_id' => $publicId,
                     'signature' => $signature,
                 ]);
 

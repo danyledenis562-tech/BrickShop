@@ -17,10 +17,13 @@
         if (! $image) {
             return null;
         }
+        $path = (string) ($image->path ?? '');
+        if (\Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
         if (method_exists($image, 'hasEmbeddedData') && $image->hasEmbeddedData()) {
             return route('media.product-image', ['image' => $image->id]);
         }
-        $path = (string) ($image->path ?? '');
         if ($path === '') {
             return null;
         }

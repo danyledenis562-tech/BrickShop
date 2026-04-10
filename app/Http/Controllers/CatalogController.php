@@ -81,7 +81,9 @@ class CatalogController extends Controller
             ->map(function (Product $product) {
                 $mainImage = $product->mainImage;
                 $image = null;
-                if ($mainImage?->hasEmbeddedData()) {
+                if (Str::startsWith((string) ($mainImage?->path ?? ''), ['http://', 'https://'])) {
+                    $image = $mainImage?->path;
+                } elseif ($mainImage?->hasEmbeddedData()) {
                     $image = route('media.product-image', ['image' => $mainImage->id]);
                 } else {
                     $image = $this->mediaUrl($mainImage?->path);

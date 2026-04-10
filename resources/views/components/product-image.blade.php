@@ -8,7 +8,9 @@
 
 @php
     $url = null;
-    if ($embedded && $imageId) {
+    if ($path && \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])) {
+        $url = $path;
+    } elseif ($embedded && $imageId) {
         $url = route('media.product-image', ['image' => $imageId]);
     } elseif ($path) {
         $normalizedPath = ltrim($path, '/');
@@ -16,7 +18,6 @@
             $normalizedPath = \Illuminate\Support\Str::after($normalizedPath, 'storage/');
         }
         $url = match (true) {
-            \Illuminate\Support\Str::startsWith($path, ['http://', 'https://']) => $path,
             \Illuminate\Support\Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
             default => route('media.public', ['path' => $normalizedPath]),
         };

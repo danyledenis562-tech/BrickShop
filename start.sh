@@ -15,13 +15,6 @@ if [ -f artisan ]; then
       php artisan shop:mirror-product-images --no-interaction || true
     fi
   fi
-  if [ "${EMBED_IMAGES_IN_DB_ON_START:-false}" = "true" ]; then
-    if [ "${EMBED_IMAGES_IN_DB_FORCE:-false}" = "true" ]; then
-      php artisan shop:embed-product-images-in-db --force --no-interaction || true
-    else
-      php artisan shop:embed-product-images-in-db --no-interaction || true
-    fi
-  fi
   if [ "${CLOUDINARY_SYNC_ON_START:-false}" = "true" ]; then
     if [ "${CLOUDINARY_SYNC_FORCE:-false}" = "true" ]; then
       php artisan shop:sync-product-images-to-cloudinary --force --no-interaction || true

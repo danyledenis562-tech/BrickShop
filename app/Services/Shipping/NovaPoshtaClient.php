@@ -135,7 +135,7 @@ final class NovaPoshtaClient
     }
 
     /**
-     * @return array<int, array{label:string}>
+     * @return array<int, array{label:string, ref:string}>
      */
     public function streets(string $cityRef, string $query): array
     {
@@ -145,7 +145,8 @@ final class NovaPoshtaClient
             return [];
         }
 
-        $cacheKey = 'shipping.np.streets.'.md5($cityRef.'|'.mb_strtolower($query));
+        // v2: NP повертає назву вулиці в Description (не StreetName); змінили ключ кешу, щоб скинути старі порожні записи
+        $cacheKey = 'shipping.np.streets.v2.'.md5($cityRef.'|'.mb_strtolower($query));
 
         return Cache::remember($cacheKey, now()->addHours(6), function () use ($cityRef, $query) {
             $apiKey = $this->apiKey();
@@ -171,7 +172,14 @@ final class NovaPoshtaClient
             }
 
             return collect($response->json('data', []))
-                ->map(fn (array $row) => ['label' => trim((string) ($row['StreetName'] ?? ''))])
+                ->map(function (array $row) {
+                    $label = trim((string) ($row['Description'] ?? $row['Present'] ?? $row['StreetName'] ?? $row['MainDescription'] ?? ''));
+
+                    return [
+                        'label' => $label,
+                        'ref' => trim((string) ($row['Ref'] ?? '')),
+                    ];
+                })
                 ->filter(fn (array $row) => $row['label'] !== '')
                 ->values()
                 ->all();

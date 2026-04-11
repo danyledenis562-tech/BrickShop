@@ -71,6 +71,8 @@ return [
     'delivery_courier' => 'Курьер',
     'delivery_courier_nova' => 'Курьер Новой Почты',
     'delivery_ukrposhta' => 'Укрпочта',
+    'ukrposhta_city_required' => 'Выберите город для доставки Укрпочтой.',
+    'ukrposhta_branch_required' => 'Выберите отделение из списка.',
     'delivery_method' => 'Способ доставки',
     'shipping_address' => 'Адрес доставки',
     'payment_type' => 'Оплата',

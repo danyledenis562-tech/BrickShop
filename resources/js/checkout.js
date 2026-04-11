@@ -1,8 +1,11 @@
 import { getDeliveryPricesFromDataset } from './checkout/deliveryPrices';
 import { initCheckoutWizard } from './checkout/wizard';
 
-// Alpine data-компонент для кастомного дропдауна МІСТ (жива Nova Poshta)
-window.cityDropdown = function () {
+// Alpine: міста (API Нової Пошти). cfg: { cityName?, cityRef? } — за замовчуванням поля НП
+window.cityDropdown = function (cfg = {}) {
+    const cityName = cfg.cityName ?? 'nova_city';
+    const cityRef = cfg.cityRef ?? 'nova_city_ref';
+
     return {
         open: false,
         search: '',
@@ -13,6 +16,8 @@ window.cityDropdown = function () {
         loading: false,
         _citiesUrl: '',
         _cache: new Map(),
+        _cityName: cityName,
+        _cityRef: cityRef,
 
         init() {
             const form = this.$el.closest('[data-checkout-wizard]');
@@ -68,17 +73,19 @@ window.cityDropdown = function () {
             this.search = item.name;
             this.open = false;
 
-            // Тригеримо зміну hidden‑інпутів, щоб Laravel бачив значення
-            const hiddenCity = this.$el.querySelector('input[name="nova_city"]');
-            const hiddenRef = this.$el.querySelector('input[name="nova_city_ref"]');
-            if (hiddenCity) hiddenCity.dispatchEvent(new Event('change'));
-            if (hiddenRef) hiddenRef.dispatchEvent(new Event('change'));
+            const hiddenCity = this.$el.querySelector(`input[name="${this._cityName}"]`);
+            const hiddenRef = this.$el.querySelector(`input[name="${this._cityRef}"]`);
+            if (hiddenCity) hiddenCity.dispatchEvent(new Event('change', { bubbles: true }));
+            if (hiddenRef) hiddenRef.dispatchEvent(new Event('change', { bubbles: true }));
         },
     };
 };
 
-// Alpine data-компонент для кастомного дропдауна ВІДДІЛЕНЬ (жива Nova Poshta)
-window.branchDropdown = function () {
+// Alpine: відділення (API Нової Пошти getWarehouses). cfg: { cityRefField?, branchNameField? }
+window.branchDropdown = function (cfg = {}) {
+    const cityRefField = cfg.cityRefField ?? 'nova_city_ref';
+    const branchNameField = cfg.branchNameField ?? 'nova_branch';
+
     return {
         open: false,
         search: '',
@@ -88,13 +95,14 @@ window.branchDropdown = function () {
         filtered: [],
         _branchesUrl: '',
         _loadedCityRef: '',
+        _cityRefField: cityRefField,
+        _branchNameField: branchNameField,
 
         init() {
             const form = this.$el.closest('[data-checkout-wizard]');
             this._branchesUrl = form?.dataset?.novaBranchesUrl || '';
 
-            // Коли місто змінюється — скидаємо відділення
-            const hiddenRef = form?.querySelector?.('input[name="nova_city_ref"]');
+            const hiddenRef = form?.querySelector?.(`input[name="${this._cityRefField}"]`);
             hiddenRef?.addEventListener('change', () => {
                 this.items = [];
                 this.filtered = [];
@@ -106,7 +114,7 @@ window.branchDropdown = function () {
 
         async _ensureLoaded() {
             const form = this.$el.closest('[data-checkout-wizard]');
-            const cityRef = form?.querySelector?.('input[name="nova_city_ref"]')?.value?.trim() || '';
+            const cityRef = form?.querySelector?.(`input[name="${this._cityRefField}"]`)?.value?.trim() || '';
             if (!cityRef || !this._branchesUrl) {
                 this.items = [];
                 this.filtered = [];
@@ -168,12 +176,11 @@ window.branchDropdown = function () {
             this.search = `${item.name}, ${item.address}`;
             this.open = false;
 
-            // синхронізуємо hidden-поле nova_branch для бекенду / валідації
             const form = this.$el.closest('[data-checkout-wizard]');
-            const hiddenBranch = form?.querySelector?.('input[name="nova_branch"]');
+            const hiddenBranch = form?.querySelector?.(`input[name="${this._branchNameField}"]`);
             if (hiddenBranch) {
                 hiddenBranch.value = this.search;
-                hiddenBranch.dispatchEvent(new Event('change'));
+                hiddenBranch.dispatchEvent(new Event('change', { bubbles: true }));
             }
         },
     };
@@ -244,6 +251,9 @@ window.courierCityDropdown = function () {
             this.selectedRef = item.ref;
             this.search = item.name;
             this.open = false;
+
+            const hiddenRef = this.$el.querySelector('input[name="courier_city_ref"]');
+            if (hiddenRef) hiddenRef.dispatchEvent(new Event('change', { bubbles: true }));
         },
     };
 };

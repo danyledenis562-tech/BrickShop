@@ -17,7 +17,7 @@ class CatalogController extends Controller
     {
         $query = Product::query()
             ->where('is_active', true)
-            ->with('mainImage', 'category')
+            ->with('coverImage', 'category')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)]);
 
@@ -74,13 +74,13 @@ class CatalogController extends Controller
         $items = Product::query()
             ->where('is_active', true)
             ->tap(fn (Builder $q) => $this->applyProductSearch($q, $term))
-            ->with('mainImage')
+            ->with('coverImage')
             ->orderByDesc('popularity')
             ->limit(5)
             ->get()
             ->map(function (Product $product) {
-                $mainImage = $product->mainImage;
-                $image = $this->mediaUrl($mainImage?->path);
+                $cover = $product->coverImage;
+                $image = $this->mediaUrl($cover?->path);
 
                 return [
                     'name' => $product->name,

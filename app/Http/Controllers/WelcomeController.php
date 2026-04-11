@@ -17,7 +17,7 @@ class WelcomeController extends Controller
         $featured = Cache::remember('home.featured', now()->addMinutes(10), fn () => Product::query()
             ->where('is_active', true)
             ->where('is_featured', true)
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->orderByDesc('popularity')
@@ -26,7 +26,7 @@ class WelcomeController extends Controller
 
         $newArrivals = Cache::remember('home.new_arrivals', now()->addMinutes(10), fn () => Product::query()
             ->where('is_active', true)
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->latest()
@@ -35,7 +35,7 @@ class WelcomeController extends Controller
 
         $hits = Cache::remember('home.hits', now()->addMinutes(10), fn () => Product::query()
             ->where('is_active', true)
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->orderByDesc('popularity')
@@ -52,7 +52,7 @@ class WelcomeController extends Controller
         if ($request->user() && Schema::hasTable('recently_viewed')) {
             $recentlyViewed = $request->user()
                 ->recentlyViewedProducts()
-                ->with('mainImage')
+                ->with('coverImage')
                 ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
                 ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
                 ->orderByDesc('recently_viewed.viewed_at')
@@ -65,7 +65,7 @@ class WelcomeController extends Controller
             if ($recentIds->isNotEmpty()) {
                 $recentlyViewed = Product::query()
                     ->whereIn('id', $recentIds)
-                    ->with('mainImage')
+                    ->with('coverImage')
                     ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
                     ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
                     ->get()

@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index(): View
     {
         $products = Product::query()
-            ->with('category', 'mainImage')
+            ->with('category', 'coverImage')
             ->when(request('search'), fn ($q) => $q->where('name', 'like', '%'.request('search').'%'))
             ->when(request('category'), fn ($q) => $q->whereHas('category', fn ($c) => $c->where('slug', request('category'))))
             ->latest()

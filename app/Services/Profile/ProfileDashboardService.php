@@ -25,7 +25,7 @@ final class ProfileDashboardService
 
         $favoritesPreview = $user
             ->favorites()
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->latest()
@@ -34,7 +34,7 @@ final class ProfileDashboardService
 
         $recentlyViewedPreview = $user
             ->recentlyViewedProducts()
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->orderByDesc('recently_viewed.viewed_at')

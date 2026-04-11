@@ -51,6 +51,16 @@ class Product extends Model
         return $this->hasOne(ProductImage::class)->where('is_main', true);
     }
 
+    /**
+     * Image for cards/lists: prefers is_main, otherwise the earliest image by id.
+     */
+    public function coverImage()
+    {
+        return $this->hasOne(ProductImage::class)->ofMany(
+            ['is_main' => 'max', 'id' => 'min'],
+        );
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

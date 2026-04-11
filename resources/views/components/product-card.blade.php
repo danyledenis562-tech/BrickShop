@@ -38,7 +38,7 @@
 
         <div class="lego-brick lego-product-photo {{ $imageHeight }}">
             <x-product-image
-                :path="$product->mainImage?->path"
+                :path="$product->coverImage?->path"
                 :alt="$product->name"
                 class="h-full w-full object-cover"
             />

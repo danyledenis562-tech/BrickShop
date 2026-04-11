@@ -13,7 +13,7 @@ class FavoriteController extends Controller
     {
         $favorites = $request->user()
             ->favorites()
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->paginate(12);

@@ -116,7 +116,7 @@ final class CartService
         $products = Product::query()
             ->whereIn('id', $ids)
             ->where('is_active', true)
-            ->with('mainImage')
+            ->with('coverImage')
             ->get()
             ->keyBy('id');
 
@@ -143,7 +143,7 @@ final class CartService
                 'slug' => (string) $product->slug,
                 'price' => (float) $product->price,
                 'quantity' => $qty,
-                'image' => $product->mainImage?->path,
+                'image' => $product->coverImage?->path,
                 'product' => $product,
             ];
         }

@@ -39,7 +39,7 @@ class ProductController extends Controller
             ->where('is_active', true)
             ->where('category_id', $product->category_id)
             ->whereKeyNot($product->id)
-            ->with('mainImage')
+            ->with('coverImage')
             ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
             ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->take(4)

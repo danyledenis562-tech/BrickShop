@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -12,32 +12,20 @@ use Illuminate\View\View;
 
 class WelcomeController extends Controller
 {
-    public function index(Request $request): View|RedirectResponse
+    public function index(Request $request): View
     {
-        $featured = Cache::remember('home.featured', now()->addMinutes(10), fn () => Product::query()
-            ->where('is_active', true)
+        $featured = Cache::remember('home.featured', now()->addMinutes(10), fn () => $this->listedProducts()
             ->where('is_featured', true)
-            ->with('coverImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
             ->orderByDesc('popularity')
             ->take(8)
             ->get());
 
-        $newArrivals = Cache::remember('home.new_arrivals', now()->addMinutes(10), fn () => Product::query()
-            ->where('is_active', true)
-            ->with('coverImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
+        $newArrivals = Cache::remember('home.new_arrivals', now()->addMinutes(10), fn () => $this->listedProducts()
             ->latest()
             ->take(8)
             ->get());
 
-        $hits = Cache::remember('home.hits', now()->addMinutes(10), fn () => Product::query()
-            ->where('is_active', true)
-            ->with('coverImage')
-            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
-            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)])
+        $hits = Cache::remember('home.hits', now()->addMinutes(10), fn () => $this->listedProducts()
             ->orderByDesc('popularity')
             ->take(8)
             ->get());
@@ -75,5 +63,14 @@ class WelcomeController extends Controller
         }
 
         return view('welcome', compact('featured', 'newArrivals', 'hits', 'categories', 'recentlyViewed'));
+    }
+
+    private function listedProducts(): Builder
+    {
+        return Product::query()
+            ->where('is_active', true)
+            ->with('coverImage')
+            ->withAvg(['reviews' => fn ($q) => $q->where('approved', true)], 'rating')
+            ->withCount(['reviews' => fn ($q) => $q->where('approved', true)]);
     }
 }

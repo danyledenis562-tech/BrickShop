@@ -36,11 +36,11 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request): RedirectResponse
     {
-        $data = $request->validated();
+        $fields = $request->validated();
 
         $product = Product::create([
-            ...$data,
-            'brand' => $data['brand'] ?? 'LEGO',
+            ...$fields,
+            'brand' => $fields['brand'] ?? 'LEGO',
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->boolean('is_active', true),
         ]);
@@ -60,11 +60,11 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
-        $data = $request->validated();
+        $fields = $request->validated();
 
         $product->update([
-            ...$data,
-            'brand' => $data['brand'] ?? 'LEGO',
+            ...$fields,
+            'brand' => $fields['brand'] ?? 'LEGO',
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->boolean('is_active', true),
         ]);

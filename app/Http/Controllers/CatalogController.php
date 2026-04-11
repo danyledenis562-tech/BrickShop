@@ -94,9 +94,6 @@ class CatalogController extends Controller
         return response()->json($items);
     }
 
-    /**
-     * Case-insensitive partial match on name, series, brand, set number, description (all words must match somewhere).
-     */
     private function applyProductSearch(Builder $query, string $search): void
     {
         $search = trim($search);

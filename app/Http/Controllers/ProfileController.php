@@ -15,37 +15,31 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile overview.
-     */
     public function index(Request $request, ProfileDashboardService $dashboard): View
     {
         $activeTab = $dashboard->resolveActiveTab($request);
-        $data = $dashboard->build($request->user(), $activeTab);
+        $overview = $dashboard->build($request->user(), $activeTab);
 
         return view('profile.index', [
             'user' => $request->user(),
-            'orders' => $data->orders,
-            'favorites' => $data->favoritesPreview,
-            'recentlyViewed' => $data->recentlyViewedPreview,
-            'bonusTransactions' => $data->bonusTransactions,
-            'activeTab' => $data->activeTab,
+            'orders' => $overview->orders,
+            'favorites' => $overview->favoritesPreview,
+            'recentlyViewed' => $overview->recentlyViewedPreview,
+            'bonusTransactions' => $overview->bonusTransactions,
+            'activeTab' => $overview->activeTab,
         ]);
     }
 
-    public function favorites(Request $request): RedirectResponse
+    public function favorites(): RedirectResponse
     {
         return redirect()->route('profile.index', ['tab' => 'favorites']);
     }
 
-    public function recent(Request $request): RedirectResponse
+    public function recent(): RedirectResponse
     {
         return redirect()->route('profile.index', ['tab' => 'recent']);
     }
 
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -53,13 +47,10 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-        $request->user()->fill(Arr::except($data, ['avatar']));
+        $validated = $request->validated();
+        $request->user()->fill(Arr::except($validated, ['avatar']));
 
         if ($request->hasFile('avatar')) {
             $user = $request->user();
@@ -78,9 +69,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -116,7 +104,6 @@ class ProfileController extends Controller
             'canceled_at' => now(),
         ]);
 
-        // Повертаємо списані бонуси
         if ($order->bonus_spent > 0) {
             $user->addBonus(
                 (int) $order->bonus_spent,
@@ -125,7 +112,6 @@ class ProfileController extends Controller
             );
         }
 
-        // Забираємо нараховані бонуси за це замовлення
         if ($order->bonus_earned > 0) {
             $user->spendBonus(
                 (int) $order->bonus_earned,

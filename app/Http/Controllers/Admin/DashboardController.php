@@ -13,7 +13,6 @@ class DashboardController extends Controller
 {
     public function index(): View
     {
-        // Use base query so `status` stays a DB string (not OrderStatus enum keys).
         $statusCounts = Order::query()
             ->toBase()
             ->select('status', DB::raw('count(*) as aggregate'))

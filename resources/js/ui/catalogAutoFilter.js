@@ -1,7 +1,3 @@
-/**
- * GET-форма каталогу: відправка без кнопки «Застосувати».
- * Select / checkbox — одразу; текст і числа — з невеликою затримкою (debounce).
- */
 export function initCatalogAutoFilter() {
     const form = document.querySelector('[data-catalog-autofilter]');
     if (!form || !(form instanceof HTMLFormElement)) {

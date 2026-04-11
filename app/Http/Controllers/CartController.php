@@ -38,8 +38,8 @@ class CartController extends Controller
 
     public function update(CartRequest $request, Product $product, CartService $cart): RedirectResponse
     {
-        $data = $request->validated();
-        $cart->updateQuantity($request, $product, (int) $data['quantity']);
+        $validated = $request->validated();
+        $cart->updateQuantity($request, $product, (int) $validated['quantity']);
 
         return back()->with('toast', __('messages.cart_updated'));
     }

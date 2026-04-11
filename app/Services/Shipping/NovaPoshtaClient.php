@@ -145,7 +145,6 @@ final class NovaPoshtaClient
             return [];
         }
 
-        // v2: NP повертає назву вулиці в Description (не StreetName); змінили ключ кешу, щоб скинути старі порожні записи
         $cacheKey = 'shipping.np.streets.v2.'.md5($cityRef.'|'.mb_strtolower($query));
 
         return Cache::remember($cacheKey, now()->addHours(6), function () use ($cityRef, $query) {

@@ -51,12 +51,6 @@ class Product extends Model
         return $this->hasOne(ProductImage::class)->where('is_main', true);
     }
 
-    /**
-     * Image for cards/lists: prefers is_main, otherwise the earliest image by id.
-     *
-     * Ordered hasOne (not ofMany): simpler SQL across MySQL/MariaDB; eager matchOne
-     * keeps the first row per product when results are ordered as below.
-     */
     public function coverImage()
     {
         return $this->hasOne(ProductImage::class)

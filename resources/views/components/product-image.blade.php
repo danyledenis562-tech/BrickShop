@@ -12,6 +12,7 @@
             $normalizedPath = \Illuminate\Support\Str::after($normalizedPath, 'storage/');
         }
         $url = match (true) {
+            \Illuminate\Support\Str::startsWith($path, ['http://', 'https://']) => $path,
             \Illuminate\Support\Str::startsWith($path, ['images/', '/images/', 'build/', '/build/']) => asset(ltrim($path, '/')),
             default => route('media.public', ['path' => $normalizedPath]),
         };

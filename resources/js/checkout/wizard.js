@@ -37,6 +37,8 @@ export function initCheckoutWizard(checkoutWizard, options) {
         courierCityRequired: checkoutWizard.dataset.msgCourierCityRequired || 'Select city',
         courierStreetRequired: checkoutWizard.dataset.msgCourierStreetRequired || 'Select street',
         courierHouseRequired: checkoutWizard.dataset.msgCourierHouseRequired || 'Enter house number',
+        ukrposhtaCityRequired: checkoutWizard.dataset.msgUkrposhtaCityRequired || 'Select city',
+        ukrposhtaBranchRequired: checkoutWizard.dataset.msgUkrposhtaBranchRequired || 'Select branch',
     };
 
     const getActiveStage = () => stages.find((stage) => Number(stage.dataset.checkoutStep) === currentStep);
@@ -141,6 +143,23 @@ export function initCheckoutWizard(checkoutWizard, options) {
                     ok = false;
                 }
 
+                if (!ok) return false;
+            }
+
+            if (selectedDeliveryType === 'ukrposhta') {
+                let ok = true;
+                const city = checkoutWizard.querySelector('input[name="ukrposhta_city"]')?.value?.trim() || '';
+                const branch = checkoutWizard.querySelector('input[name="ukrposhta_branch"]')?.value?.trim() || '';
+                if (!city) {
+                    const el = checkoutWizard.querySelector('[data-field-error="ukrposhta_city"]');
+                    if (el) el.textContent = messages.ukrposhtaCityRequired;
+                    ok = false;
+                }
+                if (!branch) {
+                    const el = checkoutWizard.querySelector('[data-field-error="ukrposhta_branch"]');
+                    if (el) el.textContent = messages.ukrposhtaBranchRequired;
+                    ok = false;
+                }
                 if (!ok) return false;
             }
         }
@@ -281,6 +300,14 @@ export function initCheckoutWizard(checkoutWizard, options) {
                 const novaCityRefInput = checkoutWizard.querySelector('input[name="nova_city_ref"]');
                 if (novaBranchInput) novaBranchInput.value = '';
                 if (novaCityRefInput) novaCityRefInput.value = '';
+            }
+            if (radio.value !== 'ukrposhta') {
+                const ukrCity = checkoutWizard.querySelector('input[name="ukrposhta_city"]');
+                const ukrCityRef = checkoutWizard.querySelector('input[name="ukrposhta_city_ref"]');
+                const ukrBranch = checkoutWizard.querySelector('input[name="ukrposhta_branch"]');
+                if (ukrCity) ukrCity.value = '';
+                if (ukrCityRef) ukrCityRef.value = '';
+                if (ukrBranch) ukrBranch.value = '';
             }
         });
     });

@@ -101,6 +101,8 @@ return [
     'courier_city_required' => 'Оберіть місто для кур’єрської доставки.',
     'courier_street_required' => 'Оберіть вулицю.',
     'courier_house_required' => 'Вкажіть номер будинку.',
+    'ukrposhta_city_required' => 'Оберіть місто для доставки Укрпоштою.',
+    'ukrposhta_branch_required' => 'Оберіть відділення зі списку.',
     'select_city' => 'Оберіть місто',
     'select_branch' => 'Оберіть відділення',
     'loading_cities' => '⏳ Завантаження міст...',

@@ -13,7 +13,6 @@ class ProductImage extends Model
     protected $fillable = [
         'product_id',
         'path',
-        'image_data',
         'is_main',
     ];
 
@@ -41,10 +40,5 @@ class ProductImage extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function hasEmbeddedData(): bool
-    {
-        return is_string($this->image_data) && str_starts_with($this->image_data, 'data:image/');
     }
 }

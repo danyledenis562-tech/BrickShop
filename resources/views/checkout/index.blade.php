@@ -30,6 +30,8 @@
                 data-msg-courier-city-required="{{ __('messages.courier_city_required') }}"
                 data-msg-courier-street-required="{{ __('messages.courier_street_required') }}"
                 data-msg-courier-house-required="{{ __('messages.courier_house_required') }}"
+                data-msg-ukrposhta-city-required="{{ __('messages.ukrposhta_city_required') }}"
+                data-msg-ukrposhta-branch-required="{{ __('messages.ukrposhta_branch_required') }}"
             >
                 @csrf
                 <input type="hidden" name="bonus_to_spend" value="{{ $bonusToSpend ?? 0 }}">
@@ -336,14 +338,100 @@
                         </div>
 
                         <div class="md:col-span-2 grid gap-4 hidden" data-delivery-block="ukrposhta">
-                            <div class="space-y-1">
+                            <div x-data="cityDropdown({ cityName: 'ukrposhta_city', cityRef: 'ukrposhta_city_ref' })" class="space-y-1 relative">
                                 <div class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.delivery_ukrposhta_city') }}</div>
-                                <input name="ukrposhta_city" class="lego-input" placeholder="{{ __('messages.delivery_ukrposhta_city') }}" value="{{ old('ukrposhta_city', auth()->user()?->city) }}" data-delivery-city-field="ukrposhta">
+
+                                <label class="checkout-field">
+                                    <span class="checkout-icon">🏙️</span>
+                                    <input
+                                        type="text"
+                                        x-model="search"
+                                        @focus="open = true; filter()"
+                                        @input="filter()"
+                                        placeholder="{{ __('messages.select_city') }}"
+                                        class="lego-input"
+                                        autocomplete="off"
+                                    >
+                                </label>
+
+                                <div
+                                    x-show="open"
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                >
+                                    <template x-if="loading">
+                                        <div class="p-4 text-sm text-[color:var(--muted)]">
+                                            {{ __('messages.loading_cities') }}
+                                        </div>
+                                    </template>
+
+                                    <template x-if="!loading && filtered.length === 0">
+                                        <div class="p-4 text-sm text-[color:var(--muted)]">
+                                            {{ __('messages.nothing_found') }}
+                                        </div>
+                                    </template>
+
+                                    <template x-for="item in filtered" :key="item.id">
+                                        <button
+                                            type="button"
+                                            @click="select(item)"
+                                            class="flex w-full flex-col items-start gap-1 px-4 py-3 text-left hover:bg-yellow-50/60"
+                                        >
+                                            <div class="text-sm font-semibold text-[color:var(--text)]" x-text="item.name"></div>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <input type="hidden" name="ukrposhta_city" data-delivery-city-field="ukrposhta" x-model="selectedName">
+                                <input type="hidden" name="ukrposhta_city_ref" x-model="selectedRef">
+                                <p class="checkout-error" data-field-error="ukrposhta_city"></p>
                             </div>
 
-                            <div class="space-y-1">
+                            <div x-data="branchDropdown({ cityRefField: 'ukrposhta_city_ref', branchNameField: 'ukrposhta_branch' })" class="space-y-1 relative">
                                 <div class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.delivery_ukrposhta_branch') }}</div>
-                                <input name="ukrposhta_branch" class="lego-input" placeholder="{{ __('messages.delivery_ukrposhta_branch') }}" value="{{ old('ukrposhta_branch') }}">
+
+                                <label class="checkout-field">
+                                    <span class="checkout-icon">📦</span>
+                                    <input
+                                        type="text"
+                                        x-model="search"
+                                        @focus="openDropdown()"
+                                        @input="filter()"
+                                        placeholder="{{ __('messages.select_branch') }}"
+                                        class="lego-input"
+                                        autocomplete="off"
+                                    >
+                                </label>
+
+                                <div
+                                    x-show="open"
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                >
+                                    <template x-if="loading">
+                                        <div class="p-4 text-sm text-[color:var(--muted)]">
+                                            {{ __('messages.loading_branches') }}
+                                        </div>
+                                    </template>
+
+                                    <template x-if="!loading && filtered.length === 0">
+                                        <div class="p-4 text-sm text-[color:var(--muted)]">
+                                            {{ __('messages.nothing_found') }}
+                                        </div>
+                                    </template>
+
+                                    <template x-for="item in filtered" :key="item.id">
+                                        <button
+                                            type="button"
+                                            @click="select(item)"
+                                            class="flex w-full flex-col items-start gap-1 px-4 py-3 text-left hover:bg-yellow-50/60"
+                                        >
+                                            <div class="text-sm font-semibold text-[color:var(--text)]" x-text="item.name"></div>
+                                            <div class="text-xs text-[color:var(--muted)]" x-text="item.address"></div>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <input type="hidden" name="ukrposhta_branch" :value="search">
+                                <p class="checkout-error" data-field-error="ukrposhta_branch"></p>
                             </div>
                         </div>
                     </div>

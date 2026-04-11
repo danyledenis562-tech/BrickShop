@@ -38,16 +38,6 @@
 
 Після успішного запуску поверни `MIRROR_IMAGES_ON_START=false`, щоб команда не запускалась на кожен деплой.
 
-### Варіант "зберігати фото прямо в БД"
-Додано окрему команду, яка завантажує фото та записує їх у `product_images.image_data`:
-
-- `php artisan shop:embed-product-images-in-db`
-- `php artisan shop:embed-product-images-in-db --force`
-
-Автозапуск під час деплою:
-- `EMBED_IMAGES_IN_DB_ON_START=true`
-- `EMBED_IMAGES_IN_DB_FORCE=true` (опційно)
-
 ### Варіант через Cloudinary (рекомендовано для продакшн)
 Команда завантажує фото товарів у Cloudinary і оновлює `product_images.path` на `secure_url`:
 

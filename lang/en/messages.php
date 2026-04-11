@@ -102,6 +102,8 @@ return [
     'courier_city_required' => 'Select a city for courier delivery.',
     'courier_street_required' => 'Select a street.',
     'courier_house_required' => 'Enter house number.',
+    'ukrposhta_city_required' => 'Select a city for Ukrposhta delivery.',
+    'ukrposhta_branch_required' => 'Select a branch from the list.',
     'select_city' => 'Select city',
     'select_branch' => 'Select branch',
     'loading_cities' => '⏳ Loading cities...',

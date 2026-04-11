@@ -94,7 +94,7 @@
                     @if ($galleryRows->count() > 1)
                         <div class="product-gallery-thumbs order-2 lg:order-1 lg:w-[5.25rem]" role="tablist" aria-label="{{ __('messages.product_gallery_thumbs') }}">
                             @foreach ($galleryRows as $idx => $imgRow)
-                                @php $thumbUrl = $galleryUrl($imgRow->path); @endphp
+                                @php $thumbUrl = $galleryUrl($imgRow); @endphp
                                 @if ($thumbUrl)
                                     <button
                                         type="button"

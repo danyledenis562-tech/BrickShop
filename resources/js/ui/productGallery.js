@@ -1,7 +1,3 @@
-/**
- * Interactive product gallery: thumbnails swap the main image with a short fade.
- * Expects [data-product-gallery], [data-gallery-main], [data-gallery-thumb] with data-gallery-src / data-gallery-alt.
- */
 export function initProductGallery() {
     const root = document.querySelector('[data-product-gallery]');
     if (!root) {

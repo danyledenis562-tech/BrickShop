@@ -41,34 +41,20 @@ class CheckoutController extends Controller
 
         $quote = $pricing->quoteFromLines($request, $lines);
 
-        $subtotal = $quote->subtotal;
-        $discount = $quote->discount;
-        $shippingAmount = $quote->shippingAmount;
-        $deliveryType = $quote->deliveryType;
-        $total = $quote->total;
-        $appliedPromo = $quote->appliedPromo;
-        $bonusBalance = $quote->bonusBalance;
-        $bonusToSpend = $quote->bonusToSpend;
-        $maxBonusUsable = $quote->maxBonusUsable;
-        $previewBonusEarn = $quote->previewBonusEarn;
-        $earnRate = $quote->earnRate;
-
-        $cart = $lines;
-
-        return view('checkout.index', compact(
-            'cart',
-            'subtotal',
-            'discount',
-            'shippingAmount',
-            'deliveryType',
-            'total',
-            'appliedPromo',
-            'bonusBalance',
-            'bonusToSpend',
-            'maxBonusUsable',
-            'previewBonusEarn',
-            'earnRate'
-        ));
+        return view('checkout.index', [
+            'cart' => $lines,
+            'subtotal' => $quote->subtotal,
+            'discount' => $quote->discount,
+            'shippingAmount' => $quote->shippingAmount,
+            'deliveryType' => $quote->deliveryType,
+            'total' => $quote->total,
+            'appliedPromo' => $quote->appliedPromo,
+            'bonusBalance' => $quote->bonusBalance,
+            'bonusToSpend' => $quote->bonusToSpend,
+            'maxBonusUsable' => $quote->maxBonusUsable,
+            'previewBonusEarn' => $quote->previewBonusEarn,
+            'earnRate' => $quote->earnRate,
+        ]);
     }
 
     public function store(CheckoutRequest $request, OrderCreator $creator, CartService $cartService, LiqPayService $liqPay): RedirectResponse|View
@@ -79,9 +65,9 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('toast', __('messages.cart_empty'));
         }
 
-        $data = $request->validated();
+        $checkout = $request->validated();
         try {
-            $order = $creator->createFromCheckout($request->user(), $data, $lines);
+            $order = $creator->createFromCheckout($request->user(), $checkout, $lines);
         } catch (OutOfStockException) {
             return back()
                 ->withInput()
@@ -113,7 +99,7 @@ class CheckoutController extends Controller
             })->afterResponse();
         }
 
-        if (($data['payment_type'] ?? '') === 'liqpay' && $liqPay->isConfigured()) {
+        if (($checkout['payment_type'] ?? '') === 'liqpay' && $liqPay->isConfigured()) {
             return view('checkout.liqpay-redirect', [
                 'checkout' => $liqPay->checkoutFormPayload($order),
             ]);
@@ -128,14 +114,11 @@ class CheckoutController extends Controller
 
     public function thanks(Request $request, Order $order): View
     {
-        $allowed = false;
-        if ($request->hasValidSignature()) {
-            $allowed = true;
-        } elseif (auth()->check() && $order->user_id && (int) $order->user_id === (int) auth()->id()) {
-            $allowed = true;
-        }
-
-        abort_unless($allowed, 403);
+        $guestOk = $request->hasValidSignature();
+        $ownerOk = auth()->check()
+            && $order->user_id
+            && (int) $order->user_id === (int) auth()->id();
+        abort_unless($guestOk || $ownerOk, 403);
 
         $order->load('items.product');
 

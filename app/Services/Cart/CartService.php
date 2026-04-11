@@ -4,24 +4,16 @@ namespace App\Services\Cart;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 
 final class CartService
 {
     private const SESSION_KEY = 'cart';
 
-    /**
-     * Session shape (canonical):
-     *  [
-     *    "123" => ["product_id" => 123, "quantity" => 2],
-     *  ]
-     */
     public function getSessionCart(Request $request): array
     {
         $raw = (array) $request->session()->get(self::SESSION_KEY, []);
 
-        // Backward-compat: previous shape included name/slug/price/image.
         $normalized = [];
         foreach ($raw as $key => $row) {
             if (! is_array($row)) {
@@ -98,11 +90,6 @@ final class CartService
         }
     }
 
-    /**
-     * Returns cart lines for rendering/pricing. Price is always taken from DB (anti-tamper).
-     *
-     * @return array<int, array{product_id:int, name:string, slug:string, price:float, quantity:int, image:?string, product:Product}>
-     */
     public function getLines(Request $request): array
     {
         $cart = $this->getSessionCart($request);
@@ -112,7 +99,6 @@ final class CartService
 
         $ids = array_map(fn ($row) => (int) $row['product_id'], array_values($cart));
 
-        /** @var Collection<int, Product> $products */
         $products = Product::query()
             ->whereIn('id', $ids)
             ->where('is_active', true)
@@ -128,11 +114,7 @@ final class CartService
             }
 
             $qty = (int) $row['quantity'];
-            if ($qty <= 0) {
-                continue;
-            }
 
-            // Soft stock cap: don't allow ordering above current stock (if stock tracked).
             if (is_numeric($product->stock)) {
                 $qty = max(1, min($qty, (int) $product->stock ?: 1));
             }

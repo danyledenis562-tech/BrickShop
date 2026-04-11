@@ -24,13 +24,11 @@ class SocialAuthController extends Controller
             return redirect()->route('login')->with('status', __('messages.google_login_failed'));
         }
 
-        /** @var \Laravel\Socialite\Two\AbstractProvider $provider */
         $provider = Socialite::driver('google');
         if (app()->environment('production')) {
             $provider = $provider->stateless();
         }
 
-        /** @var \Laravel\Socialite\Two\User $googleUser */
         $googleUser = $provider->user();
         $googleId = $googleUser->getId();
         $googleEmail = $googleUser->getEmail();

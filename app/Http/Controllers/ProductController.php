@@ -52,15 +52,15 @@ class ProductController extends Controller
 
     public function review(Request $request, Product $product): RedirectResponse
     {
-        $data = $request->validate([
+        $review = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['required', 'string', 'max:1000'],
         ]);
 
         $product->reviews()->create([
             'user_id' => $request->user()->id,
-            'rating' => $data['rating'],
-            'comment' => $data['comment'],
+            'rating' => $review['rating'],
+            'comment' => $review['comment'],
             'approved' => false,
         ]);
 

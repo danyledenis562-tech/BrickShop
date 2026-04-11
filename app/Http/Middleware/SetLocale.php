@@ -8,11 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $available = ['uk', 'en', 'pl', 'ru'];
@@ -25,7 +20,6 @@ class SetLocale
         app()->setLocale($locale);
         $request->session()->put('locale', $locale);
 
-        // Avoid overriding explicit locale switch response cookie.
         if (! $request->routeIs('locale.switch')) {
             cookie()->queue(cookie('locale', $locale, 60 * 24 * 30));
         }

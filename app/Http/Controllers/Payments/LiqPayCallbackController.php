@@ -13,14 +13,14 @@ class LiqPayCallbackController extends Controller
 {
     public function callback(Request $request, LiqPayService $liqPay): Response
     {
-        $data = (string) $request->input('data', '');
+        $encoded = (string) $request->input('data', '');
         $signature = (string) $request->input('signature', '');
 
-        if ($data === '' || $signature === '' || ! $liqPay->verifyCallbackSignature($data, $signature)) {
+        if ($encoded === '' || $signature === '' || ! $liqPay->verifyCallbackSignature($encoded, $signature)) {
             return response('invalid signature', 400);
         }
 
-        $payload = $liqPay->decodeData($data);
+        $payload = $liqPay->decodeData($encoded);
         if ($payload === null) {
             return response('invalid data', 400);
         }

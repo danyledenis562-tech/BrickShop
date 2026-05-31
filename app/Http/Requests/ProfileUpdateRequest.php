@@ -16,7 +16,16 @@ class ProfileUpdateRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:30'],
             'city' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string', 'max:255'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:8192'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'avatar.image' => __('messages.avatar_invalid_type'),
+            'avatar.mimes' => __('messages.avatar_invalid_type'),
+            'avatar.max' => __('messages.avatar_too_large'),
         ];
     }
 }

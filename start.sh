@@ -4,6 +4,7 @@ set -e
 if [ -f artisan ]; then
   php artisan package:discover --ansi || true
   php artisan storage:link || true
+  mkdir -p storage/app/public/avatars
   php artisan migrate --force || true
   if [ "${SEED_ON_START:-false}" = "true" ]; then
     php artisan db:seed --force || true

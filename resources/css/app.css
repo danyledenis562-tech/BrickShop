@@ -16,11 +16,12 @@
         --lego-gray: #111827;
         --lego-black: #111827;
         --lego-white: #FFFFFF;
-        --bg-main: #F5F6F8;
-        --bg-card: #FFFFFF;
+        --beige-rgb: 242 235 225;
+        --bg-main: #F2EBE1;
+        --bg-card: #FFFAF4;
         --bg-dark: #0b0f1a;
         --text-main: #111827;
-        --text-muted: #6B7280;
+        --text-muted: #6B6358;
         --text-inverse: #FFFFFF;
         --primary: var(--lego-yellow);
         --secondary: var(--lego-red);
@@ -33,12 +34,12 @@
         --text: var(--text-main);
         --card: var(--bg-card);
         --muted: var(--text-muted);
-        --border: rgba(17, 24, 39, 0.08);
-        --shadow: rgba(17, 24, 39, 0.12);
-        --shadow-strong: rgba(17, 24, 39, 0.2);
-        --lego-bg: #fff7cc;
+        --border: rgba(68, 52, 40, 0.1);
+        --shadow: rgba(68, 52, 40, 0.1);
+        --shadow-strong: rgba(68, 52, 40, 0.16);
+        --lego-bg: #F7EDD4;
         /* Нейтральний фон під фото товару (не жовтий LEGO — щоб не «забарвлювало» картинки) */
-        --product-photo-bg: #f3f4f6;
+        --product-photo-bg: #EBE4DA;
     }
 
     [data-theme="dark"] {
@@ -64,11 +65,10 @@
 
     .lego-page {
         background:
-            radial-gradient(circle at 10% 20%, rgb(var(--lego-yellow-rgb) / 0.18), transparent 40%),
-            radial-gradient(circle at 90% 10%, rgb(var(--lego-red-rgb) / 0.12), transparent 45%),
-            radial-gradient(circle at 80% 90%, rgb(var(--lego-blue-rgb) / 0.12), transparent 45%),
-            linear-gradient(0deg, rgb(var(--white-rgb) / 0.55), rgb(var(--white-rgb) / 0.55)),
-            var(--bg);
+            radial-gradient(circle at 10% 20%, rgb(var(--lego-yellow-rgb) / 0.16), transparent 42%),
+            radial-gradient(circle at 90% 10%, rgb(var(--lego-red-rgb) / 0.09), transparent 46%),
+            radial-gradient(circle at 80% 90%, rgb(var(--lego-blue-rgb) / 0.08), transparent 46%),
+            linear-gradient(180deg, #FAF5ED 0%, var(--bg-main) 55%, #EDE6DC 100%);
         background-attachment: fixed;
     }
 

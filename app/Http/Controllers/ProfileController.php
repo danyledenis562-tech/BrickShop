@@ -49,25 +49,43 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $user = $request->user();
         $validated = $request->validated();
-        $request->user()->fill(Arr::except($validated, ['avatar']));
+
+        $user->fill(Arr::except($validated, ['avatar']));
 
         if ($request->hasFile('avatar')) {
-            $user = $request->user();
+            $file = $request->file('avatar');
+
+            if (! $file->isValid()) {
+                return Redirect::route('profile.edit')
+                    ->withErrors(['avatar' => __('messages.avatar_upload_failed')])
+                    ->withInput();
+            }
+
             $disk = Storage::disk('public');
+            $disk->makeDirectory('avatars');
 
             if ($user->avatar && $disk->exists($user->avatar)) {
                 $disk->delete($user->avatar);
             }
 
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $storedPath = $file->store('avatars', 'public');
+
+            if ($storedPath === false) {
+                return Redirect::route('profile.edit')
+                    ->withErrors(['avatar' => __('messages.avatar_upload_failed')])
+                    ->withInput();
+            }
+
+            $user->avatar = $storedPath;
         }
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
+use App\Support\PublicMedia;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -127,25 +127,6 @@ class User extends Authenticatable
 
     public function avatarUrl(): ?string
     {
-        if (! filled($this->avatar)) {
-            return null;
-        }
-
-        $path = ltrim(str_replace('\\', '/', $this->avatar), '/');
-        if (str_starts_with($path, 'storage/')) {
-            $path = substr($path, strlen('storage/'));
-        }
-
-        if ($path === '' || str_contains($path, '..')) {
-            return null;
-        }
-
-        if (! Storage::disk('public')->exists($path)) {
-            return null;
-        }
-
-        $version = Storage::disk('public')->lastModified($path);
-
-        return route('media.public', ['path' => $path]).'?v='.$version;
+        return PublicMedia::url($this->avatar);
     }
 }

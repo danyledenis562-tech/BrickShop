@@ -33,9 +33,9 @@
             </div>
             <div class="min-w-[220px] flex-1">
                 <x-input-label for="avatar" :value="__('messages.profile_photo')" />
-                <input id="avatar" name="avatar" type="file" accept="image/*" class="lego-input mt-1 block w-full" data-avatar-input>
+                <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="lego-input mt-1 block w-full" data-avatar-input>
                 <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
-                <p class="mt-1 text-xs text-[color:var(--muted)]">PNG, JPG до 2MB. Фото буде видно у профілі.</p>
+                <p class="mt-1 text-xs text-[color:var(--muted)]">{{ __('messages.avatar_upload_hint') }}</p>
             </div>
         </div>
 

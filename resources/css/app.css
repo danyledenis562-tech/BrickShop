@@ -1312,7 +1312,11 @@
     }
 
     .lego-checkbox {
-        @apply relative inline-flex h-5 w-5 items-center justify-center rounded-md border border-[color:var(--border)] bg-[color:var(--card)] cursor-pointer;
+        @apply relative inline-flex h-5 w-5 items-center justify-center rounded-md border-2 border-white/90 bg-[color:var(--card)] cursor-pointer shadow-sm;
+    }
+
+    [data-theme="light"] .lego-checkbox {
+        @apply border-slate-400/80;
     }
 
     .lego-checkbox-inner {
@@ -1321,6 +1325,10 @@
 
     .lego-checkbox-input:checked + .lego-checkbox .lego-checkbox-inner {
         @apply opacity-100;
+    }
+
+    .lego-checkbox-input:focus-visible + .lego-checkbox {
+        @apply ring-2 ring-[color:var(--lego-yellow)] ring-offset-2 ring-offset-[color:var(--bg)];
     }
 
     /* Nova Poshta custom dropdown (new) */
@@ -1391,12 +1399,27 @@
     }
 
     .checkout-summary {
-        position: sticky;
-        top: 110px;
-        align-self: start;
         display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+
+    .checkout-aside {
+        position: sticky;
+        top: 96px;
+        align-self: start;
+        max-height: calc(100vh - 112px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+
+    @media (max-width: 1024px) {
+        .checkout-aside {
+            position: static;
+            max-height: none;
+            overflow: visible;
+        }
     }
 
     .checkout-item {
@@ -1496,6 +1519,65 @@
     .profile-stat-label {
         font-size: 0.8rem;
         color: var(--muted);
+    }
+
+    .profile-data-grid {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .profile-data-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        padding: 0.95rem 1rem;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .profile-data-item-wide {
+        grid-column: 1 / -1;
+    }
+
+    .profile-data-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 213, 0, 0.16);
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .profile-data-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .profile-data-value {
+        margin-top: 0.2rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .profile-status-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.25rem;
+        padding: 1.25rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 213, 0, 0.35);
+        background: linear-gradient(160deg, rgba(255, 213, 0, 0.08), rgba(255, 255, 255, 0.02));
     }
 
     .info-hero {

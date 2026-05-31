@@ -54,9 +54,12 @@ class ProfileController extends Controller
 
         if ($request->hasFile('avatar')) {
             $user = $request->user();
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            $disk = Storage::disk('public');
+
+            if ($user->avatar && $disk->exists($user->avatar)) {
+                $disk->delete($user->avatar);
             }
+
             $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }
 

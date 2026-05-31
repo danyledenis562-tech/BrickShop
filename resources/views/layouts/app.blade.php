@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
     <head>
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem('theme');
+                    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    document.documentElement.setAttribute('data-theme', stored || (prefersDark ? 'dark' : 'light'));
+                } catch (e) {}
+            })();
+        </script>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">

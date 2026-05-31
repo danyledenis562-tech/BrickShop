@@ -1,10 +1,6 @@
 <x-app-layout>
     @php
-        $avatarPath = $user->avatar ? ltrim($user->avatar, '/') : null;
-        if ($avatarPath && \Illuminate\Support\Str::startsWith($avatarPath, 'storage/')) {
-            $avatarPath = \Illuminate\Support\Str::after($avatarPath, 'storage/');
-        }
-        $avatarUrl = $avatarPath ? route('media.public', ['path' => $avatarPath]) : null;
+        $avatarUrl = $user->avatarUrl();
     @endphp
         <div class="mx-auto max-w-6xl px-4 py-10">
         <div class="lego-card p-6 profile-hero">
@@ -59,25 +55,55 @@
         </div>
 
         <section class="mt-6 lego-card p-6" data-tab-content="data">
-            <div class="grid gap-6 md:grid-cols-[1.2fr,0.8fr]">
+            <div class="grid gap-6 lg:grid-cols-[1.4fr,0.9fr]">
                 <div>
                     <h2 class="text-xl font-bold">{{ __('messages.profile_data') }}</h2>
                     <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.profile_data_desc') }}</p>
-                    <div class="mt-4 grid gap-3 text-sm">
-                        <div><span class="text-[color:var(--muted)]">{{ __('messages.name') }}:</span> {{ $user->name }}</div>
-                        <div><span class="text-[color:var(--muted)]">{{ __('messages.email') }}:</span> {{ $user->email }}</div>
-                        <div><span class="text-[color:var(--muted)]">{{ __('messages.phone') }}:</span> {{ $user->phone ?? '-' }}</div>
-                        <div><span class="text-[color:var(--muted)]">{{ __('messages.city') }}:</span> {{ $user->city ?? '-' }}</div>
-                        <div><span class="text-[color:var(--muted)]">{{ __('messages.address') }}:</span> {{ $user->address ?? '-' }}</div>
+                    <div class="profile-data-grid mt-5">
+                        <div class="profile-data-item">
+                            <span class="profile-data-icon" aria-hidden="true">👤</span>
+                            <div>
+                                <div class="profile-data-label">{{ __('messages.name') }}</div>
+                                <div class="profile-data-value">{{ $user->name }}</div>
+                            </div>
+                        </div>
+                        <div class="profile-data-item">
+                            <span class="profile-data-icon" aria-hidden="true">✉</span>
+                            <div>
+                                <div class="profile-data-label">{{ __('messages.email') }}</div>
+                                <div class="profile-data-value">{{ $user->email }}</div>
+                            </div>
+                        </div>
+                        <div class="profile-data-item">
+                            <span class="profile-data-icon" aria-hidden="true">📞</span>
+                            <div>
+                                <div class="profile-data-label">{{ __('messages.phone') }}</div>
+                                <div class="profile-data-value">{{ $user->phone ?: '—' }}</div>
+                            </div>
+                        </div>
+                        <div class="profile-data-item">
+                            <span class="profile-data-icon" aria-hidden="true">🏙</span>
+                            <div>
+                                <div class="profile-data-label">{{ __('messages.city') }}</div>
+                                <div class="profile-data-value">{{ $user->city ?: '—' }}</div>
+                            </div>
+                        </div>
+                        <div class="profile-data-item profile-data-item-wide">
+                            <span class="profile-data-icon" aria-hidden="true">📍</span>
+                            <div>
+                                <div class="profile-data-label">{{ __('messages.address') }}</div>
+                                <div class="profile-data-value">{{ $user->address ?: '—' }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex flex-col justify-between gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-4">
+                <div class="profile-status-card">
                     <div>
-                        <div class="text-xs font-semibold text-[color:var(--muted)]">{{ __('messages.profile_status') }}</div>
+                        <div class="profile-data-label">{{ __('messages.profile_status') }}</div>
                         <div class="mt-2 text-lg font-semibold">{{ __('messages.profile_ready') }}</div>
                         <p class="mt-2 text-sm text-[color:var(--muted)]">{{ __('messages.profile_ready_desc') }}</p>
                     </div>
-                    <a href="{{ route('profile.edit') }}" class="lego-btn lego-btn-secondary">{{ __('messages.edit_profile') }}</a>
+                    <a href="{{ route('profile.edit') }}" class="lego-btn lego-btn-primary w-full justify-center">{{ __('messages.edit_profile') }}</a>
                 </div>
             </div>
         </section>

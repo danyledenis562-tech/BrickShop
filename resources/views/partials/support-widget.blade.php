@@ -20,7 +20,7 @@
                     <span>{{ __('messages.support_telegram') }}</span>
                     <span class="support-action-icon">↗</span>
                 </a>
-                <a href="mailto:{{ $setting?->email_support ?? 'support@brickshop.ua' }}" class="support-action">
+                <a href="mailto:{{ $setting?->email_support ?? 'support.brickshop.ua@gmail.com' }}" class="support-action">
                     <span>{{ __('messages.support_email') }}</span>
                     <span class="support-action-icon">✉</span>
                 </a>

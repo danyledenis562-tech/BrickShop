@@ -17,7 +17,7 @@
             <div class="lego-card p-5 text-sm">
                 <div class="font-semibold">{{ __('messages.contacts_office') }}</div>
                 <div class="mt-2 text-[color:var(--muted)]">{{ __('messages.contacts_address') }}</div>
-                <div class="mt-2 text-[color:var(--muted)]">{{ __('messages.contacts_email') }}: hello@brickshop.test</div>
+                <div class="mt-2 text-[color:var(--muted)]">{{ __('messages.contacts_email') }}: support.brickshop.ua@gmail.com</div>
             </div>
         </div>
     </div>

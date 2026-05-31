@@ -146,7 +146,8 @@
 
                                 <div
                                     x-show="open"
-                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                    @wheel.stop
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto overscroll-contain"
                                 >
                                     <template x-if="loading">
                                         <div class="p-4 text-sm text-[color:var(--muted)]">
@@ -194,7 +195,8 @@
 
                                 <div
                                     x-show="open"
-                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                    @wheel.stop
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto overscroll-contain"
                                 >
                                     <template x-if="loading">
                                         <div class="p-4 text-sm text-[color:var(--muted)]">
@@ -356,7 +358,8 @@
 
                                 <div
                                     x-show="open"
-                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                    @wheel.stop
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto overscroll-contain"
                                 >
                                     <template x-if="loading">
                                         <div class="p-4 text-sm text-[color:var(--muted)]">
@@ -404,7 +407,8 @@
 
                                 <div
                                     x-show="open"
-                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto"
+                                    @wheel.stop
+                                    class="absolute z-10 mt-1 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--card)] shadow-2xl max-h-72 overflow-y-auto overscroll-contain"
                                 >
                                     <template x-if="loading">
                                         <div class="p-4 text-sm text-[color:var(--muted)]">
@@ -565,7 +569,7 @@
                 </section>
             </form>
 
-            <aside class="space-y-4">
+            <aside class="checkout-aside space-y-4">
                 <div class="lego-card p-6 checkout-summary">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold">{{ __('messages.order_summary') }}</h2>
@@ -629,10 +633,10 @@
                             </button>
                         </form>
                     @else
-                        <form method="GET" action="{{ route('checkout.index') }}" class="flex gap-2">
+                        <form method="GET" action="{{ route('checkout.index') }}" class="flex flex-col gap-2 sm:flex-row">
                             <input type="hidden" name="delivery_type" value="{{ $deliveryType ?? 'nova' }}">
-                            <input type="text" name="promo_code" class="lego-input flex-1" placeholder="{{ __('messages.promo_code') }}" value="{{ old('promo_code', request('promo_code')) }}">
-                            <button type="submit" class="lego-btn lego-btn-secondary">
+                            <input type="text" name="promo_code" class="lego-input min-w-0 flex-1" placeholder="{{ __('messages.promo_code') }}" value="{{ old('promo_code', request('promo_code')) }}">
+                            <button type="submit" class="lego-btn lego-btn-secondary shrink-0">
                                 {{ __('messages.promo_apply') }}
                             </button>
                         </form>
@@ -660,25 +664,25 @@
                             </div>
 
                             @if(($bonusBalance ?? 0) > 0)
-                                <form method="GET" action="{{ route('checkout.index') }}" class="mt-3 flex flex-col gap-2">
+                                <form method="GET" action="{{ route('checkout.index') }}" class="mt-3 space-y-2">
                                     <input type="hidden" name="delivery_type" value="{{ $deliveryType ?? 'nova' }}">
                                     @if(request('promo_code'))
                                         <input type="hidden" name="promo_code" value="{{ request('promo_code') }}">
                                     @endif
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex flex-wrap items-center gap-2">
                                         <input
                                             type="number"
                                             name="bonus_to_spend"
                                             min="0"
                                             max="{{ $maxBonusUsable ?? $bonusBalance }}"
                                             value="{{ $bonusToSpend ?? 0 }}"
-                                            class="lego-input h-9 w-28 text-xs"
+                                            class="lego-input h-9 w-28 shrink-0 text-xs"
                                         >
-                                        <span class="text-[color:var(--muted)]">
+                                        <span class="min-w-0 flex-1 text-[color:var(--muted)]">
                                             {{ __('messages.bonus_can_spend', ['max' => $maxBonusUsable ?? 0]) }}
                                         </span>
                                     </div>
-                                    <button type="submit" class="lego-btn lego-btn-secondary h-8 w-max px-3 text-xs">
+                                    <button type="submit" class="lego-btn lego-btn-secondary h-8 w-full px-3 text-xs sm:w-max">
                                         {{ __('messages.bonus_apply_button') }}
                                     </button>
                                 </form>

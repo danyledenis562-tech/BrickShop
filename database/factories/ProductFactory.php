@@ -22,7 +22,7 @@ class ProductFactory extends Factory
             'category_id' => \App\Models\Category::factory(),
             'name' => $name,
             'slug' => \Illuminate\Support\Str::slug($name),
-            'set_number' => fake()->optional(0.85)->numerify('#####'),
+            'set_number' => fake()->unique()->numerify('60###'),
             'price' => fake()->randomFloat(2, 10, 500),
             'stock' => fake()->numberBetween(0, 100),
             'age' => fake()->optional(0.7)->numberBetween(4, 16),

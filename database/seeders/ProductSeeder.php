@@ -90,7 +90,7 @@ class ProductSeeder extends Seeder
             ['category' => 'lego-ninjago', 'name' => 'Ninjago Титан Мех', 'slug' => 'ninjago-titan-mech', 'price' => 3499, 'old_price' => null, 'stock' => 8, 'age' => 9, 'difficulty' => 'medium', 'pieces' => 840, 'series' => 'Ninjago', 'country' => 'DK', 'description' => 'Великий мех для епічних битв.', 'is_featured' => true, 'popularity' => 230],
         ];
 
-        foreach ($products as $product) {
+        foreach ($products as $index => $product) {
             $categoryId = $categories[$product['category']]->id ?? null;
             if (! $categoryId) {
                 continue;
@@ -101,6 +101,7 @@ class ProductSeeder extends Seeder
                 [
                     'category_id' => $categoryId,
                     'name' => $product['name'],
+                    'set_number' => (string) (60300 + $index),
                     'price' => $product['price'],
                     'old_price' => $product['old_price'],
                     'stock' => $product['stock'],

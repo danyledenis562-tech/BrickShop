@@ -30,7 +30,7 @@ export function initSearchSuggestions() {
         content.className = 'flex-1 text-sm';
         content.innerHTML = `
             <div class="font-semibold">${item.name}</div>
-            <div class="text-xs text-[color:var(--muted)]">${item.series ?? ''}</div>
+            <div class="text-xs text-[color:var(--muted)]">${item.set_number ? `#${item.set_number}` : ''}${item.set_number && item.series ? ' · ' : ''}${item.series ?? ''}</div>
         `;
 
         const price = document.createElement('div');

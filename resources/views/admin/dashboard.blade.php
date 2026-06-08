@@ -136,7 +136,7 @@
                             @endphp
                             <tr>
                                 <td>#{{ $order->id }}</td>
-                                <td>{{ $order->user->email }}</td>
+                                <td>{{ $order->user?->email ?? $order->guest_email ?? '—' }}</td>
                                 <td><span class="admin-badge {{ $badgeClass }}">{{ $statusKey !== '' ? __('messages.order_status_'.$statusKey) : '—' }}</span></td>
                                 <td>{{ number_format($order->total, 2) }}</td>
                             </tr>

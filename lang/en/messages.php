@@ -336,7 +336,7 @@ return [
     'lego_city_label' => 'LEGO City',
     'telegram' => 'Telegram',
     'role' => 'Role',
-    'search_products' => 'Search LEGO sets, series, age...',
+    'search_products' => 'Search by name or set number…',
     'search_hint' => 'Top 5 matches',
     'promo_title' => 'Promo',
     'promo_city' => 'City Rescue Week',

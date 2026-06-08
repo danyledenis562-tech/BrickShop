@@ -22,8 +22,12 @@ class DashboardController extends Controller
         $sales7 = Order::query()->where('created_at', '>=', now()->subDays(7))->sum('total');
         $sales30 = Order::query()->where('created_at', '>=', now()->subDays(30))->sum('total');
 
+        $dayExpr = DB::getDriverName() === 'pgsql'
+            ? 'created_at::date'
+            : 'DATE(created_at)';
+
         $dailySalesRaw = Order::query()
-            ->selectRaw('DATE(created_at) as day, SUM(total) as total')
+            ->selectRaw("{$dayExpr} as day, SUM(total) as total")
             ->where('created_at', '>=', now()->subDays(6)->startOfDay())
             ->groupBy('day')
             ->orderBy('day')

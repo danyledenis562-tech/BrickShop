@@ -244,7 +244,7 @@ return [
     'support_telegram' => 'Telegram',
     'support_widget' => 'Показывать виджет поддержки',
     'role' => 'Роль',
-    'search_products' => 'Поиск наборов LEGO, серий, возраста...',
+    'search_products' => 'Поиск по названию или артикулу…',
     'search_hint' => 'Топ 5 совпадений',
     'promo_title' => 'Промо',
     'promo_city' => 'Неделя City Rescue',

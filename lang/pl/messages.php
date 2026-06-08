@@ -241,7 +241,7 @@ return [
     'support_telegram' => 'Telegram',
     'support_widget' => 'Pokaż widget wsparcia',
     'role' => 'Rola',
-    'search_products' => 'Szukaj zestawów LEGO, serii, wieku...',
+    'search_products' => 'Szukaj po nazwie lub numerze zestawu…',
     'search_hint' => 'Top 5 wyników',
     'promo_title' => 'Promo',
     'promo_city' => 'Tydzień City Rescue',

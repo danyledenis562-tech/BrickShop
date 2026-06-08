@@ -41,6 +41,20 @@ class CatalogTest extends TestCase
             ->assertSeeText('Amazing Technic Crane');
     }
 
+    public function test_catalog_search_matches_set_number(): void
+    {
+        Product::factory()->create([
+            'name' => 'Hidden Set Name',
+            'slug' => 'hidden-set-name',
+            'set_number' => '75192',
+            'is_active' => true,
+        ]);
+
+        $this->get(route('catalog', ['search' => '75192']))
+            ->assertOk()
+            ->assertSeeText('Hidden Set Name');
+    }
+
     public function test_product_show_page_loads(): void
     {
         $product = Product::factory()->create(['slug' => 'test-product']);

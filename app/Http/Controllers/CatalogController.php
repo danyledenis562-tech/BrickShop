@@ -31,10 +31,6 @@ class CatalogController extends Controller
             $currentCategory = $categories->firstWhere('slug', $category);
         }
 
-        if ($age = $request->integer('age')) {
-            $query->where('age', '>=', $age);
-        }
-
         if ($difficulty = $request->string('difficulty')->toString()) {
             $query->where('difficulty', $difficulty);
         }
@@ -88,6 +84,7 @@ class CatalogController extends Controller
                     'url' => route('product.show', $product),
                     'image' => $image,
                     'series' => $product->series,
+                    'set_number' => $product->set_number,
                 ];
             });
 
@@ -105,12 +102,22 @@ class CatalogController extends Controller
         foreach ($terms as $rawTerm) {
             $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $rawTerm);
             $pattern = '%'.$escaped.'%';
-            $query->where(function (Builder $q) use ($pattern) {
+            $digits = preg_replace('/\D/u', '', $rawTerm);
+            $digitPattern = $digits !== '' ? '%'.$digits.'%' : null;
+
+            $query->where(function (Builder $q) use ($pattern, $digitPattern) {
                 $q->whereRaw('LOWER(name) LIKE ?', [$pattern])
                     ->orWhereRaw('LOWER(COALESCE(series, \'\')) LIKE ?', [$pattern])
                     ->orWhereRaw('LOWER(COALESCE(brand, \'\')) LIKE ?', [$pattern])
                     ->orWhereRaw('LOWER(COALESCE(set_number, \'\')) LIKE ?', [$pattern])
                     ->orWhereRaw('LOWER(COALESCE(description, \'\')) LIKE ?', [$pattern]);
+
+                if ($digitPattern !== null) {
+                    $q->orWhereRaw(
+                        "REPLACE(REPLACE(REPLACE(COALESCE(set_number, ''), '-', ''), ' ', ''), '#', '') LIKE ?",
+                        [$digitPattern]
+                    );
+                }
             });
         }
     }

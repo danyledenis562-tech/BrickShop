@@ -62,6 +62,11 @@
 
         <div class="mt-4 relative z-20">
             <h3 class="font-semibold">{{ $product->name }}</h3>
+            @if ($product->set_number)
+                <div class="mt-1 text-xs font-mono text-[color:var(--muted)]">
+                    {{ __('messages.set_number') }}: {{ $product->set_number }}
+                </div>
+            @endif
             <div class="mt-2 flex items-center gap-2 text-sm">
                 <span class="text-lg font-bold">{{ $product->price }} грн</span>
                 @if ($isSale)

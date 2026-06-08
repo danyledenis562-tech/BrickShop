@@ -318,7 +318,7 @@ return [
     'lego_city_label' => 'LEGO City',
     'telegram' => 'Telegram',
     'role' => 'Роль',
-    'search_products' => 'Пошук LEGO наборів, серій, віку...',
+    'search_products' => 'Пошук за назвою або артикулом…',
     'search_hint' => 'Топ 5 збігів',
     'promo_title' => 'Промо',
     'promo_city' => 'Тиждень City Рятувальників',

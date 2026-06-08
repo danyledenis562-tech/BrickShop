@@ -24,7 +24,6 @@
                         <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>{{ $category->name }}</option>
                     @endforeach
                 </select>
-                <input name="age" type="number" value="{{ request('age') }}" placeholder="{{ __('messages.age') }}" class="lego-input">
                 <select name="difficulty" class="lego-input">
                     <option value="">{{ __('messages.difficulty') }}</option>
                     @foreach (['easy', 'medium', 'hard'] as $level)

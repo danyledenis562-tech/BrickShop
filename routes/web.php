@@ -84,7 +84,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('promo-codes', AdminPromoCodeController::class)->except(['show']);
     Route::resource('users', AdminUserController::class)->only(['index', 'edit', 'update']);
-    Route::get('orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::resource('reviews', AdminReviewController::class)->only(['index', 'update', 'destroy']);
     Route::get('settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
